@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cityshare.app">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.SEARCH" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".DetalhesAnuncio"
+            android:label="@string/title_activity_detalhes_anuncio"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ConfirmarInfoReserva"
+            android:label="@string/title_activity_confirmar_info_reserva"
+            android:parentActivityName=".DetalhesAnuncio"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.DetalhesAnuncio" />
+        </activity>
+        <activity
+            android:name=".PedidoEnviado"
+            android:label="@string/title_activity_pedido_enviado"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.MainActivity" />
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.MainActivity" />
+        </activity>
+        <activity
+            android:name=".PedidosActivity"
+            android:label="@string/title_activity_pedidos"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.MainActivity" />
+        </activity>
+        <activity
+            android:name=".DetalhesPedidoActivity"
+            android:label="@string/title_activity_detalhes_pedido"
+            android:parentActivityName=".PedidosActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.PedidosActivity" />
+        </activity>
+        <activity
+            android:name=".ConfirmarLocalActivity"
+            android:label="@string/title_activity_confirmar_local"
+            android:parentActivityName=".DetalhesPedidoActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.DetalhesPedidoActivity" />
+        </activity>
+        <activity
+            android:name=".LocalConfirmadoActivity"
+            android:label="@string/title_activity_local_confirmado"
+            android:parentActivityName=".DetalhesPedidoActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.DetalhesPedidoActivity" />
+        </activity>
+        <activity
+            android:name=".SolicitarRetiradaActivity"
+            android:label="@string/title_activity_solicitar_retirada"
+            android:parentActivityName=".DetalhesPedidoActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.DetalhesPedidoActivity" />
+        </activity>
+        <activity
+            android:name=".SolicitacaoRetiradaEnviadaActivity"
+            android:label="@string/title_activity_solicitacao_retirada_enviada"
+            android:parentActivityName=".DetalhesPedidoActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.DetalhesPedidoActivity" />
+        </activity>
+    </application>
+
+</manifest>

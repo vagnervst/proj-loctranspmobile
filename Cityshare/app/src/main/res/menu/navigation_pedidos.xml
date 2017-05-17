@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_pendentes"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Pendentes" />
+
+    <item
+        android:id="@+id/navigation_concluidos"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Concluídos" />
+
+</menu>
