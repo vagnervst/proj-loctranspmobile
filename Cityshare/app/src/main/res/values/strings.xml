@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Cityshare</string>
+    <string name="action_menu">Menu</string>
+    <string name="action_notificacao">Notificações</string>
+    <string name="action_filtrar">Filtragem</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_detalhes_anuncio">Detalhes do Anúncio</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_confirmar_info_reserva">Confirmar Informações para Reserva</string>
+    <string name="title_activity_pedido_enviado">Pedido Enviado para Avaliação</string>
+    <string name="title_activity_login">Login</string>
+    <string name="serverAddr">http://192.168.0.107/Web/</string>
+    <string name="title_activity_pedidos">Pedidos</string>
+    <string name="title_activity_detalhes_pedido">Detalhes do Pedido</string>
+    <string name="title_activity_confirmar_local">Confirmar Local</string>
+    <string name="title_activity_local_confirmado">Local Confirmado</string>
+    <string name="button_return">Retornar</string>
+    <string name="text_def_local_retirada_confirmado">Definição do local de retirada confirmada</string>
+    <string name="text_def_local_entrega_confirmado">Definição do local de entrega confirmada</string>
+    <string name="text_def_local_retirada_erro">Houve um erro ao tentar definir o local de retirada</string>
+    <string name="text_def_local_entrega_erro">Houve um erro ao tentar definir o local de entrega</string>
+    <string name="title_activity_solicitar_retirada">Solicitar Retirada</string>
+    <string name="title_activity_solicitacao_retirada_enviada">Solicitacao de Retirada Enviada
+    </string>
+    <string name="title_activity_solicitar_devolucao">Solicitar Devolucao</string>
+</resources>

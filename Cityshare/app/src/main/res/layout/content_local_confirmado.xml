@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.cityshare.app.LocalConfirmadoActivity"
+    tools:showIn="@layout/activity_local_confirmado"
+    android:gravity="center|top"
+    android:orientation="vertical">
+
+    <ImageView
+        android:src="@drawable/ic_confirmed"
+        android:layout_margin="10dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:text="@string/text_def_local_retirada_confirmado" />
+
+    <Button
+        android:id="@+id/btn_voltar_pedido"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/button_return"/>
+
+</LinearLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.cityshare.app.SolicitacaoRetiradaEnviadaActivity"
+    tools:showIn="@layout/activity_solicitacao_retirada_enviada"
+    android:padding="@dimen/fab_margin"
+    android:gravity="center|top"
+    android:orientation="vertical">
+
+    <ImageView
+        android:src="@drawable/ic_confirmed"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="Solicitação de Retirada Enviada!"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="Após confirmação de retirada pelo locador, R$XX,XX serão depositados na conta de ~nome do locador~"
+        android:layout_marginBottom="10dp"/>
+
+    <Button
+        android:id="@+id/btn_retornar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Retornar"/>
+
+</LinearLayout>
