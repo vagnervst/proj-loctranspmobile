@@ -11,8 +11,8 @@ public class Login {
     private static boolean logado = false;
     private static final String nome_arquivo_preferences = "prefData";
 
-    public static boolean is_logado() {
-        return logado;
+    public static boolean is_logado(Context context) {
+        return context.getSharedPreferences( nome_arquivo_preferences, Context.MODE_PRIVATE ).contains("idUsuario");
     }
 
     public static void LoginUsuario(Context context, int id) {

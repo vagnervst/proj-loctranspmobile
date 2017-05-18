@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -190,8 +191,13 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
             parametros.put("idPedido", String.valueOf(idPedido));
             String json = HttpRequest.post(url, parametros);
+            Log.d("JSON", json);
 
-            pedido = new Gson().fromJson(json, Pedido.class);
+            try {
+                pedido = new Gson().fromJson(json, Pedido.class);
+            }catch( Exception e ) {
+                Log.d("DEBUG", e.getMessage());
+            }
 
             return null;
         }

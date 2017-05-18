@@ -91,7 +91,13 @@ public class PedidosActivity extends AppCompatActivity {
             parametros.put("idStatusPedidoLimite", String.valueOf( id_pedido_final ));
 
             String json = HttpRequest.post(url, parametros);
-            pedidos = Arrays.asList( new Gson().fromJson(json, Pedido[].class) );
+            Log.d("JSON", json);
+
+            try {
+                pedidos = Arrays.asList(new Gson().fromJson(json, Pedido[].class));
+            } catch( Exception e ) {
+                Log.d("ERROR", e.getMessage());
+            }
 
             return null;
         }
@@ -109,8 +115,8 @@ public class PedidosActivity extends AppCompatActivity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            int id_pedido = ( (Pedido) pedidos.get(position) ).getId();
-            Log.d("IDPEDIDOENVIADO", String.valueOf(id_pedido));
+            int id_pedido = ( pedidos.get(position) ).getId();
+            Log.d("idPedido", String.valueOf(id_pedido));
 
             Intent detalhesPedido = new Intent(context, DetalhesPedidoActivity.class);
             detalhesPedido.putExtra("idPedido", id_pedido);

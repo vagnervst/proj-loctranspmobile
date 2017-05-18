@@ -17,6 +17,7 @@ public class Pedido {
     private String statusPedido;
     private String nomeLocador;
     private String nomeLocatario;
+    private String imagemPrincipal;
     private int limiteQuilometragem;
     private int numeroCnh;
     private int localRetiradaLocatario;
@@ -221,5 +222,13 @@ public class Pedido {
 
     public void setIdUsuarioLocador(int idUsuarioLocador) {
         this.idUsuarioLocador = idUsuarioLocador;
+    }
+
+    public String getImagemPrincipal() {
+        return imagemPrincipal;
+    }
+
+    public void setImagemPrincipal(String imagemPrincipal) {
+        this.imagemPrincipal = imagemPrincipal;
     }
 }

@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if( !Login.is_logado() ) {
+        if( !Login.is_logado( context ) ) {
 
             for( int i = 0; i < navigationView.getMenu().size(); ++i ) {
                 MenuItem item = navigationView.getMenu().getItem(i);

@@ -181,7 +181,7 @@ public class DetalhesAnuncio extends AppCompatActivity {
                         data.setTime( data_retirada.getTimeInMillis() );
 
                         java.text.DateFormat f = android.text.format.DateFormat.getDateFormat(getApplicationContext());
-                        data_formatada = new SimpleDateFormat().format( data );
+                        data_formatada = new SimpleDateFormat().format( data ).split(" ")[0];
 
                     } else if( modo == ENTREGA ) {
 
@@ -191,7 +191,7 @@ public class DetalhesAnuncio extends AppCompatActivity {
                         data.setTime( data_entrega.getTimeInMillis() );
 
                         java.text.DateFormat f = android.text.format.DateFormat.getDateFormat(getApplicationContext());
-                        data_formatada = new SimpleDateFormat().format( data );
+                        data_formatada = new SimpleDateFormat().format( data ).split(" ")[0];
 
                     }
 
@@ -237,7 +237,7 @@ public class DetalhesAnuncio extends AppCompatActivity {
 
                         Date hora = new Date( data_retirada.getTimeInMillis() );
 
-                        hora_formatada = new SimpleDateFormat().format(hora);
+                        hora_formatada = new SimpleDateFormat().format(hora).split(" ")[1];
 
                     } else if( modo == ENTREGA ) {
 
@@ -246,7 +246,7 @@ public class DetalhesAnuncio extends AppCompatActivity {
                         Date hora = new Date( data_entrega.getTimeInMillis() );
                         DateFormat f = DateFormat.getTimeInstance();
 
-                        hora_formatada = new SimpleDateFormat().format(hora);
+                        hora_formatada = new SimpleDateFormat().format(hora).split(" ")[1];
 
                     }
 
