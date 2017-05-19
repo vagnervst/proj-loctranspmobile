@@ -42,6 +42,7 @@
             android:id="@+id/btn_visualizar_pendencias"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="Visualizar Pendências" />
 
         <Button
