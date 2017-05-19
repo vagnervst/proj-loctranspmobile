@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.cityshare.app.model.AnunciarActivity;
 import com.cityshare.app.model.Anuncio;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
@@ -53,8 +54,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(context, AnunciarActivity.class);
+                startActivity( intent );
             }
         });
 
