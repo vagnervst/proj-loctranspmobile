@@ -15,21 +15,30 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.cityshare.app.model.DoubleTypeAdapter;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Pedido;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class DetalhesPedidoActivity extends AppCompatActivity {
 
     Context context;
     ViewFlipper flipper;
+    TextView modelo_veiculo;
     TextView nome;
     TextView statusPedido;
     TextView valorTotal;
@@ -41,6 +50,8 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
     Button solicitarDevolucao;
     Button confirmarLocal;
     Button cancelarLocacao;
+    Button visualizarPendencias;
+    ListView lv_historico_alteracao;
 
     int idPedido;
 
@@ -76,6 +87,8 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         context = this;
         flipper = (ViewFlipper) findViewById(R.id.flipper_detalhes_pedido);
+
+        modelo_veiculo = (TextView) findViewById(R.id.txt_modelo_veiculo);
         nome = (TextView) findViewById(R.id.txt_nome);
         statusPedido = (TextView) findViewById(R.id.txt_status_pedido);
         valorTotal = (TextView) findViewById(R.id.txt_valor_total);
@@ -93,8 +106,11 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         solicitarDevolucao = (Button) findViewById(R.id.btn_solicitar_devolucao);
         solicitarDevolucao.setOnClickListener( new AcaoSolicitarDevolucao() );
 
+        visualizarPendencias = (Button) findViewById(R.id.btn_visualizar_pendencias);
+
         cancelarLocacao = (Button) findViewById(R.id.btn_cancelar_locacao);
 
+        lv_historico_alteracao = (ListView) findViewById(R.id.lv_historico_alteracoes);
 
         idPedido = getIntent().getIntExtra("idPedido", -1);
 
@@ -108,47 +124,58 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
     }
 
     private void relacionar_componentes_status_pedido() {
-        final int id_status_aguardando_definicao_local_retirada = 2, id_status_aguardando_confirmacao_retirada = 3, id_status_aguardando_definicao_local_entrega = 4, id_status_aguardando_confirmacao_entrega = 5;
+        final int cod_status_agendado = 1,
+                cod_status_aguardando_definicao_local_retirada = 2,
+                cod_status_aguardando_confirmacao_retirada = 3,
+                cod_status_aguardando_definicao_local_entrega = 4,
+                cod_status_aguardando_confirmacao_entrega = 5,
+                cod_status_agurdando_definicao_pendencias = 6,
+                cod_status_aguardando_confirmacao_pendencias = 7;
+
         final int NAO_DEFINIDO = 0, DEFINIDO = 1;
 
         int id_usuario = Login.getId_usuario(context);
-        if( pedido.getIdStatusPedido() == id_status_aguardando_definicao_local_retirada && pedido.getIdUsuarioLocatario() == id_usuario && pedido.getLocalRetiradaLocatario() == NAO_DEFINIDO ||
-                pedido.getIdStatusPedido() == id_status_aguardando_definicao_local_entrega && pedido.getIdUsuarioLocatario() == id_usuario && pedido.getLocalDevolucaoLocatario() == NAO_DEFINIDO )
+        if( pedido.getIdStatusPedido() == cod_status_aguardando_definicao_local_retirada && pedido.getIdUsuarioLocatario() == id_usuario && pedido.getLocalRetiradaLocatario() == NAO_DEFINIDO ||
+                pedido.getIdStatusPedido() == cod_status_aguardando_definicao_local_entrega && pedido.getIdUsuarioLocatario() == id_usuario && pedido.getLocalDevolucaoLocatario() == NAO_DEFINIDO )
         {
-            if( pedido.getIdStatusPedido() == id_status_aguardando_definicao_local_entrega ) {
+            if( pedido.getIdStatusPedido() == cod_status_aguardando_definicao_local_entrega ) {
                 confirmarLocal.setText("Confirmar local de entrega");
             }
 
             confirmarLocal.setVisibility( View.VISIBLE );
         }
 
-        if( pedido.getIdStatusPedido() == id_status_aguardando_definicao_local_retirada && pedido.getIdUsuarioLocador() == id_usuario && pedido.getLocalRetiradaLocador() == NAO_DEFINIDO ||
-                pedido.getIdStatusPedido() == id_status_aguardando_definicao_local_entrega && pedido.getIdUsuarioLocador() == id_usuario && pedido.getLocalDevolucaoLocador() == NAO_DEFINIDO )
+        if( pedido.getIdStatusPedido() == cod_status_aguardando_definicao_local_retirada && pedido.getIdUsuarioLocador() == id_usuario && pedido.getLocalRetiradaLocador() == NAO_DEFINIDO ||
+                pedido.getIdStatusPedido() == cod_status_aguardando_definicao_local_entrega && pedido.getIdUsuarioLocador() == id_usuario && pedido.getLocalDevolucaoLocador() == NAO_DEFINIDO )
         {
-            if( pedido.getIdStatusPedido() == id_status_aguardando_definicao_local_entrega ) {
+            if( pedido.getIdStatusPedido() == cod_status_aguardando_definicao_local_entrega ) {
                 confirmarLocal.setText("Confirmar local de entrega");
             }
 
             confirmarLocal.setVisibility( View.VISIBLE );
         }
 
-        if( pedido.getIdStatusPedido() == id_status_aguardando_confirmacao_retirada && pedido.getIdUsuarioLocatario() == id_usuario && pedido.getSolicitacaoRetiradaLocatario() == NAO_DEFINIDO ) {
+        if( pedido.getIdStatusPedido() == cod_status_aguardando_confirmacao_retirada && pedido.getIdUsuarioLocatario() == id_usuario && pedido.getSolicitacaoRetiradaLocatario() == NAO_DEFINIDO ) {
             solicitarRetirada.setVisibility( View.VISIBLE );
         }
 
-        if( pedido.getIdStatusPedido() == id_status_aguardando_confirmacao_retirada && pedido.getIdUsuarioLocador() == id_usuario && pedido.getSolicitacaoRetiradaLocador() == NAO_DEFINIDO ) {
+        if( pedido.getIdStatusPedido() == cod_status_aguardando_confirmacao_retirada && pedido.getIdUsuarioLocador() == id_usuario && pedido.getSolicitacaoRetiradaLocador() == NAO_DEFINIDO ) {
             solicitarRetirada.setVisibility( View.VISIBLE );
         }
 
-        if( pedido.getIdStatusPedido() == id_status_aguardando_confirmacao_entrega && pedido.getIdUsuarioLocatario() == id_usuario && pedido.getSolicitacaoDevolucaoLocatario() == NAO_DEFINIDO ) {
+        if( pedido.getIdStatusPedido() == cod_status_aguardando_confirmacao_entrega && pedido.getIdUsuarioLocatario() == id_usuario && pedido.getSolicitacaoDevolucaoLocatario() == NAO_DEFINIDO ) {
             solicitarDevolucao.setVisibility( View.VISIBLE );
         }
 
-        if( pedido.getIdStatusPedido() == id_status_aguardando_confirmacao_entrega && pedido.getIdUsuarioLocador() == id_usuario && pedido.getSolicitacaoDevolucaoLocador() == NAO_DEFINIDO ) {
+        if( pedido.getIdStatusPedido() == cod_status_aguardando_confirmacao_entrega && pedido.getIdUsuarioLocador() == id_usuario && pedido.getSolicitacaoDevolucaoLocador() == NAO_DEFINIDO ) {
             solicitarDevolucao.setVisibility( View.VISIBLE );
         }
 
-        if( pedido.getIdStatusPedido() <= id_status_aguardando_confirmacao_retirada ) {
+        if( pedido.getIdStatusPedido() >= cod_status_aguardando_confirmacao_pendencias ) {
+            visualizarPendencias.setVisibility( View.VISIBLE );
+        }
+
+        if( pedido.getIdStatusPedido() <= cod_status_aguardando_confirmacao_retirada ) {
             cancelarLocacao.setVisibility( View.VISIBLE );
         }
     }
@@ -175,6 +202,160 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         }
     }
 
+    private class AcaoSolicitarDevolucao implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            LayoutInflater inflater = getLayoutInflater();
+
+            View dialog_devolucao = inflater.inflate( R.layout.dialog_solicitar_entrega, null );
+            TextView txt_data_entrega = (TextView) dialog_devolucao.findViewById( R.id.txt_data_entrega );
+            TextView txt_data_entrega_efetuada = (TextView) dialog_devolucao.findViewById( R.id.txt_data_entrega_efetuada );
+            TextView txt_dias_atraso = (TextView) dialog_devolucao.findViewById( R.id.txt_atraso );
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
+
+            Date data_entrega = null;
+            try {
+                data_entrega = formatter.parse( pedido.getDataEntrega() );
+
+                txt_data_entrega.setText( formatter.format( data_entrega ) );
+
+                Date data_atual = Calendar.getInstance().getTime();
+                txt_data_entrega_efetuada.setText( formatter.format( data_atual ) );
+
+                long diff = data_atual.getTime() - data_entrega.getTime();
+                int dias_atraso = (int) TimeUnit.MILLISECONDS.toDays( diff );
+
+                txt_dias_atraso.setText( String.format(Locale.getDefault(), "%d", dias_atraso ) );
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            builder.setView( dialog_devolucao ).setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    new SolicitarDevolucao().execute();
+                }
+            })
+            .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
+    private class AcaoVisualizarPendencias implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Pendências Definidas").setMessage("Estas são as pendências definidas pelo locador");
+            LayoutInflater inflater = getLayoutInflater();
+
+            View dialog_confirmar_pendencias = inflater.inflate(R.layout.dialog_confirmar_pendencias, null);
+            TextView txt_dias_atraso = (TextView) dialog_confirmar_pendencias.findViewById(R.id.txt_dias_atraso);
+            TextView txt_combustivel_restante = (TextView) dialog_confirmar_pendencias.findViewById(R.id.txt_litros_combustivel);
+            TextView txt_quilometragem_excedida = (TextView) dialog_confirmar_pendencias.findViewById(R.id.txt_quilometragem_excedida);
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
+
+            try {
+                Date data_entrega = formatter.parse( pedido.getDataEntrega() );
+                Date data_entrega_efetuada = formatter.parse( pedido.getDataEntregaEfetuada() );
+
+                long diff = data_entrega_efetuada.getTime() - data_entrega.getTime();
+                int dias_atrasados = (int) TimeUnit.MILLISECONDS.toDays( diff );
+                double valor_atraso = dias_atrasados * pedido.getValorDiaria();
+
+                txt_dias_atraso.setText( String.format(Locale.getDefault(), "%d = R$%.2f", dias_atrasados, valor_atraso) );
+
+                double combustivelRestante = pedido.getCombustivelRestante();
+                double valorCombustivel = pedido.getValorCombustivel();
+
+                double valorTotalCombustivel = combustivelRestante * valorCombustivel;
+                txt_combustivel_restante.setText( String.format(Locale.getDefault(), "%.2f = R$%.2f", combustivelRestante, valorTotalCombustivel) );
+
+                double valorQuilometragem = pedido.getValorQuilometragem();
+                int quilometragemExcedida = pedido.getQuilometragemExcedida();
+
+                double valorTotalQuilometragem = quilometragemExcedida * valorQuilometragem;
+                txt_quilometragem_excedida.setText( String.format(Locale.getDefault(), "%d = R$%.2f", quilometragemExcedida, valorTotalQuilometragem) );
+
+                builder.setView( dialog_confirmar_pendencias ).setPositiveButton("Concordar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new DefinirStatusPendencias( 1 ).execute();
+                    }
+                }).setNegativeButton("Discordar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new DefinirStatusPendencias( 0 ).execute();
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    private class AcaoFormaPagamentoPendencias implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Forma de Pagamento de Pendências").setMessage("Escolha a forma de pagamento das pendências");
+            View dialog_pagamento_pendencias = getLayoutInflater().inflate(R.layout.dialog_pagamento_pendencias, null);
+
+            TextView txt_dias_atraso = (TextView) dialog_pagamento_pendencias.findViewById(R.id.txt_dias_atraso);
+            TextView txt_litros_combustivel = (TextView) dialog_pagamento_pendencias.findViewById(R.id.txt_litros_combustivel);
+            TextView txt_quilometragem_excedida = (TextView) dialog_pagamento_pendencias.findViewById(R.id.txt_quilometragem_excedida);
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:dd", Locale.getDefault());
+
+            try {
+                Date data_entrega = formatter.parse( pedido.getDataEntrega() );
+                Date data_entrega_efetuada = formatter.parse( pedido.getDataEntregaEfetuada() );
+
+                long diff = data_entrega_efetuada.getTime() - data_entrega.getTime();
+                int dias_atraso = (int) TimeUnit.MILLISECONDS.toDays( diff );
+
+                txt_dias_atraso.setText( String.format(Locale.getDefault(), "%d = %.2f", dias_atraso, dias_atraso * pedido.getValorDiaria()) );
+
+                double litros_restantes = pedido.getTanqueVeiculo() / pedido.getCombustivelRestante();
+                double preco_combustivel = litros_restantes * pedido.getValorCombustivel();
+
+                txt_litros_combustivel.setText( String.format(Locale.getDefault(), "%.2fL = R$%.2f", litros_restantes, preco_combustivel) );
+
+                double valor_quilometragem_excedida = pedido.getQuilometragemExcedida() * pedido.getValorQuilometragem();
+
+                txt_quilometragem_excedida.setText(
+                        String.format(Locale.getDefault(), "%dKm = %.2f", pedido.getQuilometragemExcedida(), valor_quilometragem_excedida)
+                );
+
+                builder.setView( dialog_pagamento_pendencias );
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private class BuscarInfoPedido extends AsyncTask<Void, Void, Void> {
         ProgressDialog progress;
 
@@ -194,7 +375,8 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             Log.d("JSON", json);
 
             try {
-                pedido = new Gson().fromJson(json, Pedido.class);
+                Gson gson = new GsonBuilder().registerTypeAdapter(Double.class, new DoubleTypeAdapter()).create();
+                pedido = gson.fromJson(json, Pedido.class);
             }catch( Exception e ) {
                 Log.d("DEBUG", e.getMessage());
             }
@@ -207,6 +389,12 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             progress.dismiss();
 
+            if( pedido == null ) {
+                startActivity( new Intent(context, PedidosActivity.class) );
+                return;
+            }
+
+            modelo_veiculo.setText( pedido.getVeiculo() );
             nome.setText( pedido.getNomeLocador() );
             statusPedido.setText( pedido.getStatusPedido() );
 
@@ -216,42 +404,97 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             limiteQuilometragem.setText( String.valueOf( pedido.getLimiteQuilometragem() ) );
             cnhSelecionada.setText( String.valueOf( pedido.getNumeroCnh() ) );
 
+            lv_historico_alteracao.setAdapter( new HistoricoPedidoAdapter(context, R.layout.list_view_item_historico, pedido.getHistoricoAlteracao()) );
+
+            if( pedido.getIdStatusPedido() == 7 ) {
+                visualizarPendencias.setOnClickListener(new AcaoVisualizarPendencias());
+            } else if( pedido.getIdStatusPedido() == 8 ) {
+                visualizarPendencias.setOnClickListener( new AcaoFormaPagamentoPendencias()  );
+            }
+
             relacionar_componentes_status_pedido();
         }
     }
 
-    private class AcaoSolicitarDevolucao implements View.OnClickListener {
+    private class SolicitarDevolucao extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progress;
+        Boolean resultado;
 
         @Override
-        public void onClick(View v) {
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde");
+        }
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            LayoutInflater inflater = getLayoutInflater();
+        @Override
+        protected Void doInBackground(Void... params) {
+            String url = getString(R.string.serverAddr) + "apis/pedido_solicitacao.php";
+            HashMap<String, String> parametros = new HashMap<>();
+            parametros.put("idPedido", String.valueOf(idPedido));
+            parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
 
-            builder.setView( inflater.inflate(R.layout.dialog_solicitar_entrega, null) ).setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+            String json = HttpRequest.post(url, parametros);
+            resultado = new Gson().fromJson(json, Boolean.class);
 
-                }
-            })
-            .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
+            return null;
+        }
 
-            AlertDialog dialog = builder.create();
-            dialog.show();
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress.dismiss();
         }
     }
 
-    private class AcaoVisualizarPendencias implements View.OnClickListener {
+    private class DefinirStatusPendencias extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progress;
+        int is_pendencias_aceitas;
+        Boolean resultado;
+
+        public DefinirStatusPendencias(int aceite) {
+            this.is_pendencias_aceitas = aceite;
+        }
 
         @Override
-        public void onClick(View v) {
+        protected void onPreExecute() {
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde");
+            super.onPreExecute();
+        }
 
+        @Override
+        protected Void doInBackground(Void... params) {
+            String url = getString(R.string.serverAddr) + "apis/pedido_definir_pendencias.php";
+
+            HashMap<String, String> parametros = new HashMap<>();
+            parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
+            parametros.put("idPedido", String.valueOf(pedido.getId()));
+            parametros.put("statusPendencia", String.valueOf(is_pendencias_aceitas));
+
+            String json = HttpRequest.post(url, parametros);
+            resultado = new Gson().fromJson( json, Boolean.class );
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress.dismiss();
+
+            if( resultado ) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Forma de Pagamento").setMessage("Escolha a forma de pagamento das pendências");
+                View v = getLayoutInflater().inflate(R.layout.dialog_pagamento_pendencias, null);
+
+                builder.setView( v );
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            } else {
+                AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Erro").setMessage("Houve uma falha ao executar a operação").create();
+                dialog.show();
+            }
         }
     }
-
 }

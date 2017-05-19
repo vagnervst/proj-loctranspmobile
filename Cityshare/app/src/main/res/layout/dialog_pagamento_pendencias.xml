@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/dialog_confirmar_pendencias"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_cartao_credito"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:drawableTop="@mipmap/ic_credit_card"
+            android:text="Cartão de Crédito" />
+
+        <Button
+            android:id="@+id/btn_dinheiro"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:drawableTop="@mipmap/ic_money"
+            android:text="Dinheiro"/>
+
+    </LinearLayout>
+
+</LinearLayout>

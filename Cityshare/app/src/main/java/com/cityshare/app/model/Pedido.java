@@ -10,9 +10,12 @@ public class Pedido {
     private double valorCombustivel;
     private double valorQuilometragem;
     private double valorTotal;
+    private double combustivelRestante;
+    private double tanqueVeiculo;
     private String veiculo;
     private String dataRetirada;
     private String dataEntrega;
+    private String dataEntregaEfetuada;
     private int idStatusPedido;
     private String statusPedido;
     private String nomeLocador;
@@ -20,16 +23,18 @@ public class Pedido {
     private String imagemPrincipal;
     private int limiteQuilometragem;
     private int numeroCnh;
-    private int localRetiradaLocatario;
-    private int localDevolucaoLocatario;
-    private int localRetiradaLocador;
-    private int localDevolucaoLocador;
-    private int solicitacaoRetiradaLocatario;
-    private int solicitacaoDevolucaoLocatario;
-    private int solicitacaoRetiradaLocador;
-    private int solicitacaoDevolucaoLocador;
+    private int quilometragemExcedida;
+    private Integer localRetiradaLocatario;
+    private Integer localDevolucaoLocatario;
+    private Integer localRetiradaLocador;
+    private Integer localDevolucaoLocador;
+    private Integer solicitacaoRetiradaLocatario;
+    private Integer solicitacaoDevolucaoLocatario;
+    private Integer solicitacaoRetiradaLocador;
+    private Integer solicitacaoDevolucaoLocador;
     private int idUsuarioLocatario;
     private int idUsuarioLocador;
+    private HistoricoAlteracaoPedido[] historicoAlteracao;
 
     public int getId() {
         return id;
@@ -230,5 +235,45 @@ public class Pedido {
 
     public void setImagemPrincipal(String imagemPrincipal) {
         this.imagemPrincipal = imagemPrincipal;
+    }
+
+    public String getDataEntregaEfetuada() {
+        return dataEntregaEfetuada;
+    }
+
+    public void setDataEntregaEfetuada(String dataEntregaEfetuada) {
+        this.dataEntregaEfetuada = dataEntregaEfetuada;
+    }
+
+    public double getCombustivelRestante() {
+        return combustivelRestante;
+    }
+
+    public void setCombustivelRestante(double combustivelRestante) {
+        this.combustivelRestante = combustivelRestante;
+    }
+
+    public int getQuilometragemExcedida() {
+        return quilometragemExcedida;
+    }
+
+    public void setQuilometragemExcedida(int quilometragemExcedida) {
+        this.quilometragemExcedida = quilometragemExcedida;
+    }
+
+    public HistoricoAlteracaoPedido[] getHistoricoAlteracao() {
+        return historicoAlteracao;
+    }
+
+    public void setHistoricoAlteracao(HistoricoAlteracaoPedido[] historicoAlteracao) {
+        this.historicoAlteracao = historicoAlteracao;
+    }
+
+    public double getTanqueVeiculo() {
+        return tanqueVeiculo;
+    }
+
+    public void setTanqueVeiculo(double tanqueVeiculo) {
+        this.tanqueVeiculo = tanqueVeiculo;
     }
 }

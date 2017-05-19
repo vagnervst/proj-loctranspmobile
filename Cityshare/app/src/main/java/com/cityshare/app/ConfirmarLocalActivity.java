@@ -132,6 +132,8 @@ public class ConfirmarLocalActivity extends AppCompatActivity {
             if( modo != -1 ) {
                 parametros.put("modo", String.valueOf(modo));
                 String json = HttpRequest.post( url, parametros );
+                Log.d("JSON", json);
+
                 resultado = new Gson().fromJson( json, Boolean.class );
             }
 

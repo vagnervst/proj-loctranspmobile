@@ -4,13 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textAlignment="center"
-        android:text="Confirmação de Pendências"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,6 +17,7 @@
             android:text="Atraso"/>
 
         <TextView
+            android:id="@+id/txt_dias_atraso"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="X dias = R$XX,XX"/>
@@ -35,6 +29,7 @@
             android:text="Combustível restante para preenchimento"/>
 
         <TextView
+            android:id="@+id/txt_litros_combustivel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="X litros = R$XX,XX"/>
@@ -46,9 +41,10 @@
             android:text="Quilometragem Excedida"/>
 
         <TextView
+            android:id="@+id/txt_quilometragem_excedida"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="X litros = R$XX,XX"/>
+            android:text="X quilometros = R$XX,XX"/>
 
     </LinearLayout>
 
