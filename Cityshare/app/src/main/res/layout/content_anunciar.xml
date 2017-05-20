@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.cityshare.app.model.AnunciarActivity"
+    tools:context="com.cityshare.app.AnunciarActivity"
     tools:showIn="@layout/activity_anunciar">
 
     <LinearLayout
@@ -46,32 +46,32 @@
                 android:hint="Descrição"/>
         </android.support.design.widget.TextInputLayout>
         <Spinner
-            android:id="@+id/tipo_veiculo"
+            android:id="@+id/spn_tipo_veiculo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Spinner
-            android:id="@+id/fabricante"
+            android:id="@+id/spn_fabricante"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Spinner
-            android:id="@+id/tipo_combustivel_"
+            android:id="@+id/spn_tipo_combustivel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Spinner
-            android:id="@+id/transmissao"
+            android:id="@+id/spn_transmissao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Spinner
-            android:id="@+id/qtd_portas"
+            android:id="@+id/spn_qtd_portas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Spinner
-            android:id="@+id/modelo_veiculo"
+            android:id="@+id/spn_modelo_veiculo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -83,7 +83,7 @@
                 android:id="@+id/quilometragem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Titulo"/>
+                android:hint="Quilometragem"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -94,7 +94,7 @@
                 android:id="@+id/valor_diaria"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Titulo"/>
+                android:hint="Valor da Diária"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -105,17 +105,18 @@
                 android:id="@+id/valor_combustivel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Titulo"/>
+                android:hint="Valor do Combustível por Litro"/>
         </android.support.design.widget.TextInputLayout>
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/limite_quilometragens"
+                android:id="@+id/limite_quilometragem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Titulo"/>
+                android:hint="Limite de Quilometragem"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -126,7 +127,7 @@
                 android:id="@+id/valor_quilometragem_excedida"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Titulo"/>
+                android:hint="Valor por Quilometragem Excedida"/>
         </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>
