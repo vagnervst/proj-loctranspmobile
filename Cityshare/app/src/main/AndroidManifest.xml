@@ -113,7 +113,7 @@
                 android:value="com.cityshare.app.DetalhesPedidoActivity" />
         </activity>
         <activity
-            android:name=".model.AnunciarActivity"
+            android:name=".AnunciarActivity"
             android:label="@string/title_activity_anunciar"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
