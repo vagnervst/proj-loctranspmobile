@@ -8,11 +8,18 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.cityshare.app.R;
+import com.cityshare.app.model.Pedido;
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+
+import static com.cityshare.app.model.HttpRequest.post;
 
 public class AnunciarActivity extends AppCompatActivity {
 
@@ -53,7 +60,110 @@ public class AnunciarActivity extends AppCompatActivity {
         spnQtdPortas = (Spinner) findViewById(R.id.spn_qtd_portas);
         spnModeloVeiculo = (Spinner) findViewById(R.id.spn_modelo_veiculo);
     }
+    private class BuscarTiposVeiculo extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progress;
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde...");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String url = getString( R.string.serverAddr ) + "apis/android/listar_tipos_veiculo.php";
+            HashMap<String, String> parametros = new HashMap<>();
+
+            
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress.dismiss();
+        }
+    }
+    private class BuscarFabricantes extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progress;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde...");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress.dismiss();
+        }
+    }
+    private class BuscarTransmissoes extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progress;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde...");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress.dismiss();
+        }
+    }
+    private class BuscarTiposCombustivel extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progress;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde...");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress.dismiss();
+        }
+    }
+    private class BuscarModelosVeiculo extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progress;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde...");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress.dismiss();
+        }
+    }
     private class AcaoAnunciar extends AsyncTask<Void, Void, Void> {
         ProgressDialog progress;
 
