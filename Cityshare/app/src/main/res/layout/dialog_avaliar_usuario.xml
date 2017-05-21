@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_estrela1"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="40dp"
+            android:src="@mipmap/ic_blue_star_outline" />
+
+        <ImageView
+            android:id="@+id/iv_estrela2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="40dp"
+            android:src="@mipmap/ic_blue_star_outline" />
+
+        <ImageView
+            android:id="@+id/iv_estrela3"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="40dp"
+            android:src="@mipmap/ic_blue_star_outline" />
+
+        <ImageView
+            android:id="@+id/iv_estrela4"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="40dp"
+            android:src="@mipmap/ic_blue_star_outline" />
+
+        <ImageView
+            android:id="@+id/iv_estrela5"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="40dp"
+            android:src="@mipmap/ic_blue_star_outline" />
+
+    </LinearLayout>
+
+    <SeekBar
+        android:id="@+id/sb_nota_avaliacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="5"/>
+
+    <TextView
+        android:id="@+id/txt_label_nota"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="@color/colorAccent"
+        android:text="X/5"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <EditText
+            android:id="@+id/edt_comentario_avaliacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="5"
+            android:gravity="top|start"
+            android:maxLength="200"
+            android:hint="Comentario..."/>
+
+    </android.support.design.widget.TextInputLayout>
+
+
+
+</LinearLayout>
