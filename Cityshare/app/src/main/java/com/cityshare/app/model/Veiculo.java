@@ -122,4 +122,9 @@ public class Veiculo {
     public void setVisivel(int visivel) {
         this.visivel = visivel;
     }
+
+    @Override
+    public String toString() {
+        return this.nome;
+    }
 }
