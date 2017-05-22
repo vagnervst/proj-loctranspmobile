@@ -165,6 +165,7 @@ public class ConfirmarInfoReserva extends AppCompatActivity {
             parametros.put("idUsuarioLocatario", String.valueOf(id_usuario));
 
             String json = HttpRequest.post(url, parametros);
+            Log.d("JSONAGENDAMENTO", json);
 
             resultado = new Gson().fromJson(json, Boolean.class);
 
