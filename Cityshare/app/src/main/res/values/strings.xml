@@ -27,5 +27,6 @@
     <string name="title_activity_solicitacao_retirada_enviada">Solicitacao de Retirada Enviada
     </string>
     <string name="title_activity_solicitar_devolucao">Solicitar Devolucao</string>
+    <string name="title_activity_configuracoes_conta">Configurações de Conta</string>
     <string name="title_activity_anunciar">AnunciarActivity</string>
 </resources>

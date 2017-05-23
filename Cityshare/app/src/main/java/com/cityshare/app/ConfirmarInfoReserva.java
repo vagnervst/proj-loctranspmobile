@@ -74,7 +74,9 @@ public class ConfirmarInfoReserva extends AppCompatActivity {
         txt_diarias.setText( String.format( Locale.getDefault(), "%d", diarias ) );
 
         double valor_diaria = getIntent().getDoubleExtra("valorDiaria", -1);
-        txt_valor_total.setText( String.format(Locale.getDefault(), "R$%.2f", valor_diaria) );
+        double total = valor_diaria * diarias;
+
+        txt_valor_total.setText( String.format(Locale.getDefault(), "R$%.2f", total) );
 
         new GetInfoUsuario().execute();
     }
@@ -156,13 +158,14 @@ public class ConfirmarInfoReserva extends AppCompatActivity {
             String url = getString(R.string.serverAddr) + "apis/android/gerar_pedido.php";
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idPublicacao", String.valueOf(id_anuncio));
-            parametros.put("dataRetirada", String.valueOf(time_data_retirada));
-            parametros.put("dataDevolucao", String.valueOf(time_data_entrega));
+
+            parametros.put("dataRetirada", String.valueOf(time_data_retirada/1000));
+            parametros.put("dataDevolucao", String.valueOf(time_data_entrega/1000));
             parametros.put("idCnh", String.valueOf(id_cnh_selecionado));
             parametros.put("idUsuarioLocatario", String.valueOf(id_usuario));
 
             String json = HttpRequest.post(url, parametros);
-            Log.d("JSON", json);
+            Log.d("JSONAGENDAMENTO", json);
 
             resultado = new Gson().fromJson(json, Boolean.class);
 

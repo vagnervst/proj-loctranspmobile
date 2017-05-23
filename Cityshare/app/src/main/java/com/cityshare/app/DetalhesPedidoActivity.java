@@ -15,7 +15,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -28,9 +31,11 @@ import com.google.gson.GsonBuilder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -180,6 +185,186 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         }
     }
 
+    private void abrirModalFormaPagamentoPendencias() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Forma de Pagamento de Pendências").setMessage("Escolha a forma de pagamento das pendências");
+        final View dialog_pagamento_pendencias = getLayoutInflater().inflate(R.layout.dialog_pagamento_pendencias, null);
+
+        TextView txt_dias_atraso = (TextView) dialog_pagamento_pendencias.findViewById(R.id.txt_dias_atraso);
+        TextView txt_litros_combustivel = (TextView) dialog_pagamento_pendencias.findViewById(R.id.txt_litros_combustivel);
+        TextView txt_quilometragem_excedida = (TextView) dialog_pagamento_pendencias.findViewById(R.id.txt_quilometragem_excedida);
+        Button btn_dinheiro = (Button) dialog_pagamento_pendencias.findViewById(R.id.btn_dinheiro);
+        Button btn_cartao_credito = (Button) dialog_pagamento_pendencias.findViewById(R.id.btn_cartao_credito);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:dd", Locale.getDefault());
+
+        try {
+            Date data_entrega = formatter.parse( pedido.getDataEntrega() );
+            Date data_entrega_efetuada = formatter.parse( pedido.getDataEntregaEfetuada() );
+
+            long diff = data_entrega_efetuada.getTime() - data_entrega.getTime();
+            int dias_atraso = (int) TimeUnit.MILLISECONDS.toDays( diff );
+
+            txt_dias_atraso.setText( String.format(Locale.getDefault(), "%d = %.2f", dias_atraso, dias_atraso * pedido.getValorDiaria()) );
+
+            double litros_restantes = pedido.getTanqueVeiculo() / pedido.getCombustivelRestante();
+            double preco_combustivel = litros_restantes * pedido.getValorCombustivel();
+
+            txt_litros_combustivel.setText( String.format(Locale.getDefault(), "%.2fL = R$%.2f", litros_restantes, preco_combustivel) );
+
+            double valor_quilometragem_excedida = pedido.getQuilometragemExcedida() * pedido.getValorQuilometragem();
+
+            txt_quilometragem_excedida.setText(
+                    String.format(Locale.getDefault(), "%dKm = %.2f", pedido.getQuilometragemExcedida(), valor_quilometragem_excedida)
+            );
+
+            builder.setView( dialog_pagamento_pendencias );
+
+            final AlertDialog dialog = builder.create();
+
+            btn_dinheiro.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    abrirModalPagamentoDinheiro();
+                    dialog.dismiss();
+                }
+            });
+
+            btn_cartao_credito.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    abrirModalPagamentoCartaoCredito();
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void abrirModalPagamentoDinheiro() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Pagamento em Dinheiro").setMessage("R$XX,XX devem ser pagos à ~edt_nome do locador~").setPositiveButton("Confirmar Pagamento", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                new PagarPendencias( PagarPendencias.DINHEIRO, null ).execute();
+            }
+        }).setNegativeButton("Voltar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                abrirModalFormaPagamentoPendencias();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void abrirModalPagamentoCartaoCredito() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Pagamento em Cartão de Crédito").setMessage("R$XX,XX serão descontados do cartão de crédito cadastrado em sua conta");
+        View view_pagamento_cartao = getLayoutInflater().inflate(R.layout.dialog_pagamento_cartao_credito, null);
+        final EditText txt_codigo_seguranca = (EditText) view_pagamento_cartao.findViewById(R.id.txt_codigo_seguranca_cartao);
+
+        builder.setPositiveButton("Realizar Pagamento", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if( !txt_codigo_seguranca.getText().toString().isEmpty() ) {
+                    String codigo_seguranca = txt_codigo_seguranca.getText().toString().trim();
+                    new PagarPendencias( PagarPendencias.CARTAO_CREDITO, codigo_seguranca ).execute();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Voltar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                abrirModalFormaPagamentoPendencias();
+            }
+        });
+
+        builder.setView(view_pagamento_cartao);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void abrirModalAvaliacao() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Avaliar Usuário").setMessage("Curtiu a negociação? Deixe uma avaliação para ~edt_nome do usuário~ :-)");
+        View view_dialog_avaliacao = getLayoutInflater().inflate(R.layout.dialog_avaliar_usuario, null);
+        builder.setView(view_dialog_avaliacao);
+
+        final EditText comentario_avaliacao = (EditText) view_dialog_avaliacao.findViewById(R.id.edt_comentario_avaliacao);
+        final SeekBar nota_avaliacao = (SeekBar) view_dialog_avaliacao.findViewById(R.id.sb_nota_avaliacao);
+        final TextView label_nota_avaliacao = (TextView) view_dialog_avaliacao.findViewById(R.id.txt_label_nota);
+
+        final List<ImageView> estrelas_avaliacao = new ArrayList<>();
+        estrelas_avaliacao.add( (ImageView) view_dialog_avaliacao.findViewById(R.id.iv_estrela1) );
+        estrelas_avaliacao.add( (ImageView) view_dialog_avaliacao.findViewById(R.id.iv_estrela2) );
+        estrelas_avaliacao.add( (ImageView) view_dialog_avaliacao.findViewById(R.id.iv_estrela3) );
+        estrelas_avaliacao.add( (ImageView) view_dialog_avaliacao.findViewById(R.id.iv_estrela4) );
+        estrelas_avaliacao.add( (ImageView) view_dialog_avaliacao.findViewById(R.id.iv_estrela5) );
+
+        nota_avaliacao.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                if( progress < 0 ) {
+                    progress = 0;
+                } else if( progress > 5 ) {
+                    progress = 5;
+                }
+
+                for( int i = 0; i < 5; ++i ) {
+
+                    if( i < progress ) {
+                        estrelas_avaliacao.get(i).setImageResource(R.mipmap.ic_blue_star);
+                    } else {
+                        estrelas_avaliacao.get(i).setImageResource(R.mipmap.ic_blue_star_outline);
+                    }
+                }
+
+                label_nota_avaliacao.setText( String.format(Locale.getDefault(), "%d/5", progress) );
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        builder.setPositiveButton("Avaliar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String comentario = "";
+
+                if( comentario_avaliacao.getText() != null ) {
+                    comentario = comentario_avaliacao.getText().toString().trim();
+                }
+
+                new AvaliarUsuario(nota_avaliacao.getProgress(), comentario).execute();
+            }
+        });
+
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
     private class AcaoConfirmarLocal implements View.OnClickListener {
 
         @Override
@@ -228,6 +413,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
                 long diff = data_atual.getTime() - data_entrega.getTime();
                 int dias_atraso = (int) TimeUnit.MILLISECONDS.toDays( diff );
+                if( dias_atraso < 0 ) dias_atraso = 0;
 
                 txt_dias_atraso.setText( String.format(Locale.getDefault(), "%d", dias_atraso ) );
 
@@ -273,21 +459,23 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
                 long diff = data_entrega_efetuada.getTime() - data_entrega.getTime();
                 int dias_atrasados = (int) TimeUnit.MILLISECONDS.toDays( diff );
+                if( dias_atrasados < 0 ) dias_atrasados = 0;
+
                 double valor_atraso = dias_atrasados * pedido.getValorDiaria();
 
-                txt_dias_atraso.setText( String.format(Locale.getDefault(), "%d = R$%.2f", dias_atrasados, valor_atraso) );
+                txt_dias_atraso.setText( String.format(Locale.getDefault(), "%d dias = R$%.2f", dias_atrasados, valor_atraso) );
 
-                double combustivelRestante = pedido.getCombustivelRestante();
+                double combustivelRestante = pedido.getTanqueVeiculo()/pedido.getCombustivelRestante();
                 double valorCombustivel = pedido.getValorCombustivel();
 
                 double valorTotalCombustivel = combustivelRestante * valorCombustivel;
-                txt_combustivel_restante.setText( String.format(Locale.getDefault(), "%.2f = R$%.2f", combustivelRestante, valorTotalCombustivel) );
+                txt_combustivel_restante.setText( String.format(Locale.getDefault(), "%.2fL = R$%.2f", combustivelRestante, valorTotalCombustivel) );
 
                 double valorQuilometragem = pedido.getValorQuilometragem();
                 int quilometragemExcedida = pedido.getQuilometragemExcedida();
 
                 double valorTotalQuilometragem = quilometragemExcedida * valorQuilometragem;
-                txt_quilometragem_excedida.setText( String.format(Locale.getDefault(), "%d = R$%.2f", quilometragemExcedida, valorTotalQuilometragem) );
+                txt_quilometragem_excedida.setText( String.format(Locale.getDefault(), "%dKm = R$%.2f", quilometragemExcedida, valorTotalQuilometragem) );
 
                 builder.setView( dialog_confirmar_pendencias ).setPositiveButton("Concordar", new DialogInterface.OnClickListener() {
                     @Override
@@ -315,44 +503,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Forma de Pagamento de Pendências").setMessage("Escolha a forma de pagamento das pendências");
-            View dialog_pagamento_pendencias = getLayoutInflater().inflate(R.layout.dialog_pagamento_pendencias, null);
-
-            TextView txt_dias_atraso = (TextView) dialog_pagamento_pendencias.findViewById(R.id.txt_dias_atraso);
-            TextView txt_litros_combustivel = (TextView) dialog_pagamento_pendencias.findViewById(R.id.txt_litros_combustivel);
-            TextView txt_quilometragem_excedida = (TextView) dialog_pagamento_pendencias.findViewById(R.id.txt_quilometragem_excedida);
-
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:dd", Locale.getDefault());
-
-            try {
-                Date data_entrega = formatter.parse( pedido.getDataEntrega() );
-                Date data_entrega_efetuada = formatter.parse( pedido.getDataEntregaEfetuada() );
-
-                long diff = data_entrega_efetuada.getTime() - data_entrega.getTime();
-                int dias_atraso = (int) TimeUnit.MILLISECONDS.toDays( diff );
-
-                txt_dias_atraso.setText( String.format(Locale.getDefault(), "%d = %.2f", dias_atraso, dias_atraso * pedido.getValorDiaria()) );
-
-                double litros_restantes = pedido.getTanqueVeiculo() / pedido.getCombustivelRestante();
-                double preco_combustivel = litros_restantes * pedido.getValorCombustivel();
-
-                txt_litros_combustivel.setText( String.format(Locale.getDefault(), "%.2fL = R$%.2f", litros_restantes, preco_combustivel) );
-
-                double valor_quilometragem_excedida = pedido.getQuilometragemExcedida() * pedido.getValorQuilometragem();
-
-                txt_quilometragem_excedida.setText(
-                        String.format(Locale.getDefault(), "%dKm = %.2f", pedido.getQuilometragemExcedida(), valor_quilometragem_excedida)
-                );
-
-                builder.setView( dialog_pagamento_pendencias );
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            abrirModalFormaPagamentoPendencias();
         }
     }
 
@@ -372,7 +523,6 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
             parametros.put("idPedido", String.valueOf(idPedido));
             String json = HttpRequest.post(url, parametros);
-            Log.d("JSON", json);
 
             try {
                 Gson gson = new GsonBuilder().registerTypeAdapter(Double.class, new DoubleTypeAdapter()).create();
@@ -471,6 +621,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             parametros.put("statusPendencia", String.valueOf(is_pendencias_aceitas));
 
             String json = HttpRequest.post(url, parametros);
+            Log.d("JSONPENDENCIAS", json);
             resultado = new Gson().fromJson( json, Boolean.class );
 
             return null;
@@ -493,6 +644,111 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
             } else {
                 AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Erro").setMessage("Houve uma falha ao executar a operação").create();
+                dialog.show();
+            }
+        }
+    }
+
+    private class PagarPendencias extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progress;
+        private static final int CARTAO_CREDITO = 1, DINHEIRO = 2;
+        private int formaPagamento;
+        private String codigoSeguranca;
+        Boolean resultado;
+
+        private PagarPendencias(int formaPagamento, String codigoSeguranca) {
+            this.formaPagamento = formaPagamento;
+            this.codigoSeguranca = codigoSeguranca;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String url = getString(R.string.serverAddr) + "apis/pedido_realizar_pagamento.php";
+
+            HashMap<String, String> parametros = new HashMap<>();
+            parametros.put("idPedido", String.valueOf(idPedido));
+            parametros.put("formaPagamento", String.valueOf(formaPagamento));
+
+            if( codigoSeguranca != null ) {
+                parametros.put("codigoSegurancaCartao", codigoSeguranca);
+            }
+
+            String json  = HttpRequest.post(url, parametros);
+            resultado = new Gson().fromJson(json, Boolean.class);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress.dismiss();
+
+            if( resultado ) {
+
+                if( formaPagamento == DINHEIRO ) {
+                    AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Pagamento realizado").setMessage("Aguarde ~edt_nome do locador~ confirmar o pagamento").create();
+                    dialog.show();
+                } else if( formaPagamento == CARTAO_CREDITO ) {
+                    abrirModalAvaliacao();
+                }
+
+            } else {
+                AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Houve um erro").setMessage("Houve um erro ao tentar realizar o pagamento").create();
+                dialog.show();
+            }
+        }
+    }
+
+    private class AvaliarUsuario extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progress;
+        private String comentarioAvaliacao;
+        private int notaAvaliacao;
+        Boolean resultado;
+
+        private AvaliarUsuario(int nota, String comentario) {
+            this.notaAvaliacao = nota;
+            this.comentarioAvaliacao = comentario;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String url = getString(R.string.serverAddr) + "apis/pedido_avaliacao.php";
+
+            HashMap<String, String> parametros = new HashMap<>();
+            parametros.put("notaAvaliacao", String.valueOf(notaAvaliacao));
+            parametros.put("idPedido", String.valueOf(idPedido));
+            parametros.put("mensagemAvaliacao", comentarioAvaliacao);
+            parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
+
+            String json = HttpRequest.post(url, parametros);
+            resultado = new Gson().fromJson(json, Boolean.class);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress.dismiss();
+
+            if( resultado ) {
+                AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Avaliação enviada").setMessage("~edt_nome do usuario~ agradece a sua avaliação!").create();
+                dialog.show();
+            } else {
+                AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Houve um erro").setMessage("Houve um erro ao tentar enviar a avaliação").create();
                 dialog.show();
             }
         }
