@@ -31,21 +31,16 @@ public class PedidosActivity extends AppCompatActivity {
 
     List<Pedido> pedidos;
 
-    int id_pedido_inicial = 1, id_pedido_final = 8;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_pendentes:
-                    id_pedido_inicial = 1;
-                    id_pedido_final = 8;
-                    new CarregarPedidos().execute();
+                    new CarregarPedidos(CarregarPedidos.PENDENTES).execute();
                     return true;
                 case R.id.navigation_concluidos:
-                    id_pedido_inicial = 9;
-                    id_pedido_final = 9;
-                    new CarregarPedidos().execute();
+                    new CarregarPedidos(CarregarPedidos.CONCLUIDOS).execute();
                     return true;
             }
             return false;
@@ -68,11 +63,17 @@ public class PedidosActivity extends AppCompatActivity {
 
         pedidos = new ArrayList<>();
 
-        new CarregarPedidos().execute();
+        new CarregarPedidos(CarregarPedidos.PENDENTES).execute();
     }
 
     private class CarregarPedidos extends AsyncTask<Void, Void, Void> {
+        private static final int PENDENTES = 1, CONCLUIDOS = 2;
+        int statusAlvo;
         ProgressDialog progress;
+
+        private CarregarPedidos(int status) {
+            this.statusAlvo = status;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -87,8 +88,7 @@ public class PedidosActivity extends AppCompatActivity {
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idUsuario", String.valueOf( id_usuario ));
-            parametros.put("idStatusPedido", String.valueOf( id_pedido_inicial ));
-            parametros.put("idStatusPedidoLimite", String.valueOf( id_pedido_final ));
+            parametros.put("filtragemPedidos", String.valueOf( this.statusAlvo ));
 
             String json = HttpRequest.post(url, parametros);
             Log.d("JSON", json);

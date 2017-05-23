@@ -113,11 +113,16 @@
                 android:value="com.cityshare.app.DetalhesPedidoActivity" />
         </activity>
         <activity
+
+            android:name=".ConfiguracoesContaActivity"
+            android:label="@string/title_activity_configuracoes_conta"
+            android:parentActivityName=".MainActivity">
+
             android:name=".AnunciarActivity"
             android:label="@string/title_activity_anunciar"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
+          <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cityshare.app.MainActivity" />
         </activity>

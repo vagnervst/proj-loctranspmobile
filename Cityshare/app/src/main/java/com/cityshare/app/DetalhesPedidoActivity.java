@@ -246,7 +246,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
     }
 
     private void abrirModalPagamentoDinheiro() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Pagamento em Dinheiro").setMessage("R$XX,XX devem ser pagos à ~nome do locador~").setPositiveButton("Confirmar Pagamento", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Pagamento em Dinheiro").setMessage("R$XX,XX devem ser pagos à ~edt_nome do locador~").setPositiveButton("Confirmar Pagamento", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 new PagarPendencias( PagarPendencias.DINHEIRO, null ).execute();
@@ -292,7 +292,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
     }
 
     private void abrirModalAvaliacao() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Avaliar Usuário").setMessage("Curtiu a negociação? Deixe uma avaliação para ~nome do usuário~ :-)");
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Avaliar Usuário").setMessage("Curtiu a negociação? Deixe uma avaliação para ~edt_nome do usuário~ :-)");
         View view_dialog_avaliacao = getLayoutInflater().inflate(R.layout.dialog_avaliar_usuario, null);
         builder.setView(view_dialog_avaliacao);
 
@@ -693,7 +693,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             if( resultado ) {
 
                 if( formaPagamento == DINHEIRO ) {
-                    AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Pagamento realizado").setMessage("Aguarde ~nome do locador~ confirmar o pagamento").create();
+                    AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Pagamento realizado").setMessage("Aguarde ~edt_nome do locador~ confirmar o pagamento").create();
                     dialog.show();
                 } else if( formaPagamento == CARTAO_CREDITO ) {
                     abrirModalAvaliacao();
@@ -745,7 +745,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             progress.dismiss();
 
             if( resultado ) {
-                AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Avaliação enviada").setMessage("~nome do usuario~ agradece a sua avaliação!").create();
+                AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Avaliação enviada").setMessage("~edt_nome do usuario~ agradece a sua avaliação!").create();
                 dialog.show();
             } else {
                 AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Houve um erro").setMessage("Houve um erro ao tentar enviar a avaliação").create();
