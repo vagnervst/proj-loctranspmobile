@@ -112,6 +112,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cityshare.app.DetalhesPedidoActivity" />
         </activity>
+        <activity
+            android:name=".ConfiguracoesContaActivity"
+            android:label="@string/title_activity_configuracoes_conta"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

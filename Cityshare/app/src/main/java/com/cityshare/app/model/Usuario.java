@@ -7,6 +7,7 @@ package com.cityshare.app.model;
 public class Usuario {
     private int id;
     private int idCidade;
+    private int idEstado;
     private int idTipoConta;
     private int idPlanoConta;
     private int idLicencaDesktop;
@@ -18,12 +19,14 @@ public class Usuario {
     private String telefone;
     private String celular;
     private String email;
+    private String emailContato;
     private String rg;
     private String senha;
     private double saldo;
     private String dataNascimento;
     private String fotoPerfil;
     private Cnh[] listaCnh;
+    private CartaoCredito cartaoCredito;
 
     public int getId() {
         return id;
@@ -175,5 +178,29 @@ public class Usuario {
 
     public void setListaCnh(Cnh[] listaCnh) {
         this.listaCnh = listaCnh;
+    }
+
+    public int getIdEstado() {
+        return idEstado;
+    }
+
+    public void setIdEstado(int idEstado) {
+        this.idEstado = idEstado;
+    }
+
+    public String getEmailContato() {
+        return emailContato;
+    }
+
+    public void setEmailContato(String emailContato) {
+        this.emailContato = emailContato;
+    }
+
+    public CartaoCredito getCartaoCredito() {
+        return cartaoCredito;
+    }
+
+    public void setCartaoCredito(CartaoCredito cartaoCredito) {
+        this.cartaoCredito = cartaoCredito;
     }
 }

@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -154,7 +155,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_notificacoes) {
 
         } else if (id == R.id.nav_conta) {
-
+            Intent configContaWin = new Intent( context, ConfiguracoesContaActivity.class );
+            startActivity( configContaWin );
         } else if (id == R.id.nav_sair) {
 
         }
@@ -195,6 +197,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params) {
             String json = HttpRequest.get( getString(R.string.serverAddr) + "apis/android/lista_anuncios.php");
+            Log.d("JSONANUNCIOS", json);
 
             anuncios = Arrays.asList( new Gson().fromJson(json, Anuncio[].class) );
 
