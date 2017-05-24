@@ -11,11 +11,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.cityshare.app.R;
 import com.cityshare.app.model.Fabricante;
+import com.cityshare.app.model.HttpRequest;
+import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Pedido;
 import com.cityshare.app.model.TipoCombustivel;
 import com.cityshare.app.model.TipoVeiculo;
@@ -27,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +41,7 @@ import static com.cityshare.app.model.HttpRequest.post;
 public class AnunciarActivity extends AppCompatActivity {
 
     Context context;
+    Button btnAnunciar;
     EditText txtTitulo;
     EditText txtDescricao;
     Spinner spnTipoVeiculo;
@@ -44,6 +50,7 @@ public class AnunciarActivity extends AppCompatActivity {
     Spinner spnTransmissao;
     Spinner spnQtdPortas;
     Spinner spnModeloVeiculo;
+    EditText txtValorVeiculo;
     EditText txtQuilometragem;
     EditText txtValorDiaria;
     EditText txtValorCombustivel;
@@ -63,6 +70,7 @@ public class AnunciarActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         context = this;
+        btnAnunciar = (Button) findViewById(R.id.btn_anunciar);
         txtTitulo = (EditText) findViewById(R.id.titulo_anuncio);
         txtDescricao = (EditText) findViewById(R.id.descricao_anuncio);
         txtQuilometragem = (EditText) findViewById(R.id.quilometragem);
@@ -70,6 +78,7 @@ public class AnunciarActivity extends AppCompatActivity {
         txtValorCombustivel = (EditText) findViewById(R.id.valor_combustivel);
         txtLimiteQuilometragem = (EditText) findViewById(R.id.limite_quilometragem);
         txtValorQuilometragemExcedida = (EditText) findViewById(R.id.valor_quilometragem_excedida);
+        txtValorVeiculo = (EditText) findViewById(R.id.valor_veiculo);
         spnTipoVeiculo = (Spinner) findViewById(R.id.spn_tipo_veiculo);
         spnFabricante = (Spinner) findViewById(R.id.spn_fabricante);
         spnTipoCombustivel = (Spinner) findViewById(R.id.spn_tipo_combustivel);
@@ -83,6 +92,12 @@ public class AnunciarActivity extends AppCompatActivity {
         new BuscarTiposCombustivel().execute();
         new BuscarModelosVeiculo().execute();
 
+        btnAnunciar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AcaoAnunciar().execute();
+            }
+        });
     }
     private class BuscarTiposVeiculo extends AsyncTask<Void, Void, Void> {
         ProgressDialog progress;
@@ -326,6 +341,7 @@ public class AnunciarActivity extends AppCompatActivity {
     }
     private class AcaoAnunciar extends AsyncTask<Void, Void, Void> {
         ProgressDialog progress;
+        Boolean resultado = false;
 
         @Override
         protected void onPreExecute() {
@@ -335,12 +351,46 @@ public class AnunciarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
+            String url = getString(R.string.serverAddr) + "apis/anuncio_publicar.php";
+            HashMap<String, String> parametros = new HashMap<>();
+
+            parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
+            parametros.put("txtTitulo", String.valueOf(txtTitulo));
+            parametros.put("txtDescricao", String.valueOf(txtDescricao));
+            parametros.put("slTipo", String.valueOf(spnTipoVeiculo));
+            parametros.put("slFabricante", String.valueOf(spnFabricante));
+            parametros.put("slCombustivel", String.valueOf(spnTipoCombustivel));
+            parametros.put("slTransmissao", String.valueOf(spnTransmissao));
+            parametros.put("slModelo", String.valueOf(spnModeloVeiculo));
+            parametros.put("txtQuilometragem", String.valueOf(txtQuilometragem));
+            parametros.put("txtLimiteQuilometragem", String.valueOf(txtLimiteQuilometragem));
+            parametros.put("txtValorQuilometragem", String.valueOf(txtValorQuilometragemExcedida));
+            parametros.put("txtValorVeiculo", String.valueOf(txtValorVeiculo));
+            parametros.put("txtValorDiaria", String.valueOf(txtValorDiaria));
+            parametros.put("txtValorCombustivel", String.valueOf(txtValorCombustivel));
+
+
+            String json = HttpRequest.post( url, parametros );
+            Log.d("JSON", json);
+
+            //resultado = new Gson().fromJson( json, Boolean.class );
+
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            progress.dismiss();
+
+            if( resultado ) {
+                Toast toast = Toast.makeText(context, "Inserido com Sucesso!", Toast.LENGTH_LONG);
+                toast.show();
+            } else {
+                Toast toast = Toast.makeText(context, "Deu ruim", Toast.LENGTH_LONG);
+                toast.show();
+            }
+
         }
     }
 }

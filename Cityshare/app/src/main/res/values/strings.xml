@@ -28,5 +28,5 @@
     </string>
     <string name="title_activity_solicitar_devolucao">Solicitar Devolucao</string>
     <string name="title_activity_configuracoes_conta">Configurações de Conta</string>
-    <string name="title_activity_anunciar">AnunciarActivity</string>
+    <string name="title_activity_anunciar">Anunciar</string>
 </resources>
