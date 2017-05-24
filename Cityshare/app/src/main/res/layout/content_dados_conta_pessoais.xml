@@ -20,10 +20,13 @@
                 android:layout_height="wrap_content"
                 android:text="Foto:"/>
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/iv_foto_perfil"
                 android:layout_width="150dp"
-                android:layout_height="150dp"/>
+                android:layout_height="150dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"/>
 
         </LinearLayout>
 
@@ -36,6 +39,7 @@
                 android:id="@+id/edt_nome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:hint="Nome"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -49,6 +53,7 @@
                 android:id="@+id/edt_sobrenome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:hint="Sobrenome"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -57,6 +62,8 @@
             android:id="@+id/edt_data_nascimento"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
+            android:focusable="false"
             android:hint="Data de Nascimento"
             android:layout_marginBottom="10dp"/>
 
@@ -136,6 +143,7 @@
                 android:id="@+id/edt_rg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:hint="RG"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -148,6 +156,7 @@
                 android:id="@+id/edt_cpf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:hint="CPF"/>
 
         </android.support.design.widget.TextInputLayout>

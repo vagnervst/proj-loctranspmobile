@@ -48,6 +48,7 @@
                 android:layout_marginBottom="10dp">
 
                 <EditText
+                    android:id="@+id/edt_numero_cartao"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Número do Cartão"/>
@@ -55,6 +56,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <EditText
+                android:id="@+id/edt_validade_cartao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -102,6 +104,7 @@
                 android:layout_marginBottom="10dp">
 
                 <EditText
+                    android:id="@+id/edt_numero_agencia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Número da Agência"/>
@@ -114,6 +117,7 @@
                 android:layout_marginBottom="10dp">
 
                 <EditText
+                    android:id="@+id/edt_numero_conta_bancaria"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Número da Conta"/>
@@ -126,6 +130,7 @@
                 android:layout_marginBottom="10dp">
 
                 <EditText
+                    android:id="@+id/edt_digito_verificador_conta_bancaria"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Dígito Verificador"/>

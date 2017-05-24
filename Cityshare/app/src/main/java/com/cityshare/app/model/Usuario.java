@@ -27,6 +27,7 @@ public class Usuario {
     private String fotoPerfil;
     private Cnh[] listaCnh;
     private CartaoCredito cartaoCredito;
+    private ContaBancaria contaBancaria;
 
     public int getId() {
         return id;
@@ -202,5 +203,13 @@ public class Usuario {
 
     public void setCartaoCredito(CartaoCredito cartaoCredito) {
         this.cartaoCredito = cartaoCredito;
+    }
+
+    public ContaBancaria getContaBancaria() {
+        return contaBancaria;
+    }
+
+    public void setContaBancaria(ContaBancaria contaBancaria) {
+        this.contaBancaria = contaBancaria;
     }
 }
