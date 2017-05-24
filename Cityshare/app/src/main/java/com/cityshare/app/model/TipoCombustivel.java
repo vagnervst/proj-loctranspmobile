@@ -6,7 +6,7 @@ package com.cityshare.app.model;
 
 public class TipoCombustivel {
     private int id;
-    private String titulo;
+    private String nome;
 
     public int getId() {
         return id;
@@ -16,11 +16,16 @@ public class TipoCombustivel {
         this.id = id;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public String getNome() {
+        return nome;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    @Override
+    public String toString() {
+        return this.nome;
     }
 }
