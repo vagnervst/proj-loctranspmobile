@@ -7,6 +7,7 @@ package com.cityshare.app.model;
 public class Cnh {
     private int id;
     private int numeroRegistro;
+    private String validade;
     private int idUsuario;
 
     public int getId() {
@@ -31,6 +32,14 @@ public class Cnh {
 
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public String getValidade() {
+        return validade;
+    }
+
+    public void setValidade(String validade) {
+        this.validade = validade;
     }
 
     @Override
