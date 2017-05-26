@@ -34,6 +34,32 @@ public class Pedido {
     private Integer solicitacaoDevolucaoLocador;
     private int idUsuarioLocatario;
     private int idUsuarioLocador;
+    private int pagamentoPendenciaLocador;
+    private int pagamentoPendenciaLocatario;
+    private int idPublicacao;
+    private int idTipoPedido;
+    private int idFormaPagamento;
+    private int idFormaPagamentoPendencias;
+    private int idFuncionario;
+    private int idCnh;
+    private int idVeiculo;
+    private int locatarioAvaliado;
+    private int locadorAvaliado;
+    private double valorVeiculo;
+    private int idCategoriaVeiculo;
+    private int diarias;
+    private String sobrenomeLocador;
+    private String locadorCelular;
+    private String locadorTelefone;
+    private String cidadeLocador;
+    private String estadoLocador;
+    private String locatarioCelular;
+    private String locatarioEmail;
+    private String locatarioTelefone;
+    private String sobrenomeLocatario;
+    private String cidadeLocatario;
+    private String estadoLocatario;
+    private String imagemPerfilLocatario;
     private HistoricoAlteracaoPedido[] historicoAlteracao;
 
     public int getId() {
@@ -275,5 +301,213 @@ public class Pedido {
 
     public void setTanqueVeiculo(double tanqueVeiculo) {
         this.tanqueVeiculo = tanqueVeiculo;
+    }
+
+    public int getPagamentoPendenciaLocador() {
+        return pagamentoPendenciaLocador;
+    }
+
+    public void setPagamentoPendenciaLocador(int pagamentoPendenciaLocador) {
+        this.pagamentoPendenciaLocador = pagamentoPendenciaLocador;
+    }
+
+    public int getPagamentoPendenciaLocatario() {
+        return pagamentoPendenciaLocatario;
+    }
+
+    public void setPagamentoPendenciaLocatario(int pagamentoPendenciaLocatario) {
+        this.pagamentoPendenciaLocatario = pagamentoPendenciaLocatario;
+    }
+
+    public int getIdPublicacao() {
+        return idPublicacao;
+    }
+
+    public void setIdPublicacao(int idPublicacao) {
+        this.idPublicacao = idPublicacao;
+    }
+
+    public int getIdTipoPedido() {
+        return idTipoPedido;
+    }
+
+    public void setIdTipoPedido(int idTipoPedido) {
+        this.idTipoPedido = idTipoPedido;
+    }
+
+    public int getIdFormaPagamento() {
+        return idFormaPagamento;
+    }
+
+    public void setIdFormaPagamento(int idFormaPagamento) {
+        this.idFormaPagamento = idFormaPagamento;
+    }
+
+    public int getIdFormaPagamentoPendencias() {
+        return idFormaPagamentoPendencias;
+    }
+
+    public void setIdFormaPagamentoPendencias(int idFormaPagamentoPendencias) {
+        this.idFormaPagamentoPendencias = idFormaPagamentoPendencias;
+    }
+
+    public int getIdFuncionario() {
+        return idFuncionario;
+    }
+
+    public void setIdFuncionario(int idFuncionario) {
+        this.idFuncionario = idFuncionario;
+    }
+
+    public int getIdCnh() {
+        return idCnh;
+    }
+
+    public void setIdCnh(int idCnh) {
+        this.idCnh = idCnh;
+    }
+
+    public int getIdVeiculo() {
+        return idVeiculo;
+    }
+
+    public void setIdVeiculo(int idVeiculo) {
+        this.idVeiculo = idVeiculo;
+    }
+
+    public int getLocatarioAvaliado() {
+        return locatarioAvaliado;
+    }
+
+    public void setLocatarioAvaliado(int locatarioAvaliado) {
+        this.locatarioAvaliado = locatarioAvaliado;
+    }
+
+    public int getLocadorAvaliado() {
+        return locadorAvaliado;
+    }
+
+    public void setLocadorAvaliado(int locadorAvaliado) {
+        this.locadorAvaliado = locadorAvaliado;
+    }
+
+    public double getValorVeiculo() {
+        return valorVeiculo;
+    }
+
+    public void setValorVeiculo(double valorVeiculo) {
+        this.valorVeiculo = valorVeiculo;
+    }
+
+    public int getIdCategoriaVeiculo() {
+        return idCategoriaVeiculo;
+    }
+
+    public void setIdCategoriaVeiculo(int idCategoriaVeiculo) {
+        this.idCategoriaVeiculo = idCategoriaVeiculo;
+    }
+
+    public int getDiarias() {
+        return diarias;
+    }
+
+    public void setDiarias(int diarias) {
+        this.diarias = diarias;
+    }
+
+    public String getSobrenomeLocador() {
+        return sobrenomeLocador;
+    }
+
+    public void setSobrenomeLocador(String sobrenomeLocador) {
+        this.sobrenomeLocador = sobrenomeLocador;
+    }
+
+    public String getLocadorCelular() {
+        return locadorCelular;
+    }
+
+    public void setLocadorCelular(String locadorCelular) {
+        this.locadorCelular = locadorCelular;
+    }
+
+    public String getLocadorTelefone() {
+        return locadorTelefone;
+    }
+
+    public void setLocadorTelefone(String locadorTelefone) {
+        this.locadorTelefone = locadorTelefone;
+    }
+
+    public String getCidadeLocador() {
+        return cidadeLocador;
+    }
+
+    public void setCidadeLocador(String cidadeLocador) {
+        this.cidadeLocador = cidadeLocador;
+    }
+
+    public String getEstadoLocador() {
+        return estadoLocador;
+    }
+
+    public void setEstadoLocador(String estadoLocador) {
+        this.estadoLocador = estadoLocador;
+    }
+
+    public String getLocatarioCelular() {
+        return locatarioCelular;
+    }
+
+    public void setLocatarioCelular(String locatarioCelular) {
+        this.locatarioCelular = locatarioCelular;
+    }
+
+    public String getLocatarioEmail() {
+        return locatarioEmail;
+    }
+
+    public void setLocatarioEmail(String locatarioEmail) {
+        this.locatarioEmail = locatarioEmail;
+    }
+
+    public String getLocatarioTelefone() {
+        return locatarioTelefone;
+    }
+
+    public void setLocatarioTelefone(String locatarioTelefone) {
+        this.locatarioTelefone = locatarioTelefone;
+    }
+
+    public String getSobrenomeLocatario() {
+        return sobrenomeLocatario;
+    }
+
+    public void setSobrenomeLocatario(String sobrenomeLocatario) {
+        this.sobrenomeLocatario = sobrenomeLocatario;
+    }
+
+    public String getCidadeLocatario() {
+        return cidadeLocatario;
+    }
+
+    public void setCidadeLocatario(String cidadeLocatario) {
+        this.cidadeLocatario = cidadeLocatario;
+    }
+
+    public String getEstadoLocatario() {
+        return estadoLocatario;
+    }
+
+    public void setEstadoLocatario(String estadoLocatario) {
+        this.estadoLocatario = estadoLocatario;
+    }
+
+    public String getImagemPerfilLocatario() {
+        return imagemPerfilLocatario;
+    }
+
+    public void setImagemPerfilLocatario(String imagemPerfilLocatario) {
+        this.imagemPerfilLocatario = imagemPerfilLocatario;
     }
 }

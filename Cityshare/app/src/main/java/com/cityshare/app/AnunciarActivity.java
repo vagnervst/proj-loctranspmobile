@@ -1,25 +1,15 @@
 package com.cityshare.app;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.content.Context;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.cityshare.app.R;
-import com.cityshare.app.model.Pedido;
-import com.google.gson.Gson;
-
 import java.util.HashMap;
-
-import static com.cityshare.app.model.HttpRequest.post;
 
 public class AnunciarActivity extends AppCompatActivity {
 
@@ -60,6 +50,7 @@ public class AnunciarActivity extends AppCompatActivity {
         spnQtdPortas = (Spinner) findViewById(R.id.spn_qtd_portas);
         spnModeloVeiculo = (Spinner) findViewById(R.id.spn_modelo_veiculo);
     }
+
     private class BuscarTiposVeiculo extends AsyncTask<Void, Void, Void> {
         ProgressDialog progress;
 

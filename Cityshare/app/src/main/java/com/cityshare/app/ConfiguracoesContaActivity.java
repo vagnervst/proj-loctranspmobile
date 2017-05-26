@@ -179,6 +179,23 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
             }
         }) );
 
+        edt_validade_cartao.setOnClickListener( new ActionData(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+                Date data_selecionada = null;
+                try {
+                    data_selecionada = formatter.parse( String.format(Locale.getDefault(), "%d-%d-%d", year, month+1, dayOfMonth) );
+
+                    edt_validade_cartao.setText( SimpleDateFormat.getDateInstance().format(data_selecionada) );
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }) );
+
         context = this;
 
         iv_foto_perfil.setOnClickListener( new ActionFotoPerfil() );
@@ -269,6 +286,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
             parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
             String json = HttpRequest.post(url, parametros);
+            Log.d("UPDATE", json);
 
             resultado = new Gson().fromJson(json, Boolean.class);
 
@@ -290,7 +308,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
         if( indice_view_ativa == 0 ) {
             if( nova_foto != null ) {
-                //new EnviarNovaImagemParaApi().execute();
+                parametros.put("modo", "pessoal");
 
                 ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
                 nova_foto.compress(Bitmap.CompressFormat.JPEG, 100, byteArray);
@@ -344,6 +362,8 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
             parametros.put("idCidade", String.valueOf(cidade_selecionada.getId()));
 
         } else if( indice_view_ativa == 1 ) {
+            parametros.put("modo", "contato");
+
             if( edt_telefone.getText() != null && !edt_telefone.getText().toString().trim().isEmpty() ) {
                 String telefone = edt_telefone.getText().toString().trim();
                 parametros.put("telefone", telefone);
@@ -360,6 +380,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
             }
 
         } else if( indice_view_ativa == 2 ) {
+            parametros.put("modo", "financeiro");
 
             if( sp_tipo_cartao.getSelectedItem() != null ) {
                 TipoCartaoCredito tipoCartao = (TipoCartaoCredito) sp_tipo_cartao.getSelectedItem();
@@ -373,7 +394,14 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
                 if (edt_validade_cartao.getText() != null && !edt_validade_cartao.getText().toString().trim().isEmpty()) {
                     String validade_cartao = edt_validade_cartao.getText().toString().trim();
-                    parametros.put("validadeCartao", validade_cartao);
+
+                    try {
+                        Date data_validade = SimpleDateFormat.getDateInstance().parse( validade_cartao );
+                        long unix_timestamp = data_validade.getTime()/1000;
+
+                        parametros.put("validadeCartao", String.valueOf(unix_timestamp));
+                    } catch (ParseException e) {
+                        e.printStackTrace();}
                 }
             }
 
@@ -401,6 +429,8 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
             //edt_numero_nova_cnh.setEnabled( modo );
             //edt_validade_nova_cnh.setEnabled( modo );
         } else if( indice_view_ativa == 4 ) {
+            parametros.put("modo", "autenticacao");
+
             if( edt_email_autenticacao.getText() != null && !edt_email_autenticacao.getText().toString().trim().isEmpty() ) {
                 String email_autenticacao = edt_email_autenticacao.getText().toString().trim();
                 parametros.put("emailAutenticacao", email_autenticacao);
@@ -880,10 +910,9 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
                     edt_numero_cartao.setText( usuario.getCartaoCredito().getNumero() );
 
                     try {
+                        Date data_validade = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse( usuario.getCartaoCredito().getVencimento() );
 
-                        edt_validade_cartao.setText( SimpleDateFormat.getInstance().format(
-                                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(usuario.getCartaoCredito().getVencimento())
-                        ) );
+                        edt_validade_cartao.setText( SimpleDateFormat.getDateInstance().format( data_validade ) );
 
                     } catch (ParseException e) {
                         e.printStackTrace();
