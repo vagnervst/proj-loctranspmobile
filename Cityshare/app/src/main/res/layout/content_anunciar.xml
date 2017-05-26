@@ -80,6 +80,17 @@
             android:layout_height="wrap_content">
 
             <EditText
+                android:id="@+id/valor_veiculo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Valor do Veículo"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
                 android:id="@+id/quilometragem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -127,8 +138,13 @@
                 android:id="@+id/valor_quilometragem_excedida"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Valor por Quilometragem Excedida"/>
+                android:hint="Valor por Quilometragem Excedida"
+                android:inputType="number"/>
         </android.support.design.widget.TextInputLayout>
-
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_anunciar"
+            android:text="Anunciar"/>
     </LinearLayout>
 </ScrollView>
