@@ -113,33 +113,49 @@
                 android:value="com.cityshare.app.DetalhesPedidoActivity" />
         </activity>
         <activity
-            android:name=".AnunciarActivity"
-            android:label="@string/title_activity_anunciar"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".ConfiguracoesContaActivity"
+            android:label="@string/title_activity_configuracoes_conta"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.MainActivity" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+
+                <data android:mimeType="image/*" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".services.NotificacoesService"
+            android:exported="false" />
+        <service
+            android:name=".services.NotificacoesListener"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".SolicitacoesActivity"
+            android:label="@string/title_activity_solicitacoes"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cityshare.app.MainActivity" />
         </activity>
         <activity
-
-            android:name=".ConfiguracoesContaActivity"
-            android:label="@string/title_activity_configuracoes_conta"
-            android:parentActivityName=".MainActivity">
-
             android:name=".AnunciarActivity"
             android:label="@string/title_activity_anunciar"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-          <meta-data
+            android:parentActivityName=".MainActivity">
+            <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cityshare.app.MainActivity" />
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-                <data android:mimeType="image/*"/>
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.OPENABLE" />
-            </intent-filter>
         </activity>
     </application>
 

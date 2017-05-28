@@ -12,6 +12,8 @@
             android:id="@+id/edt_email_autenticacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
+            android:inputType="textEmailAddress"
             android:hint="Email"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -24,6 +26,8 @@
             android:id="@+id/edt_senha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
+            android:inputType="textPassword"
             android:hint="Senha"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -36,6 +40,8 @@
             android:id="@+id/edt_confirmar_senha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
+            android:inputType="textPassword"
             android:hint="Confirmar Senha"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -48,6 +54,8 @@
             android:id="@+id/edt_nova_senha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
+            android:inputType="textPassword"
             android:hint="Nova Senha"/>
 
     </android.support.design.widget.TextInputLayout>

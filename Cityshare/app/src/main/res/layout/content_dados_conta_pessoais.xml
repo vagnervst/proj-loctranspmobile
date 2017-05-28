@@ -40,6 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="false"
+                android:inputType="textPersonName"
                 android:hint="Nome"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -54,6 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="false"
+                android:inputType="textPersonName"
                 android:hint="Sobrenome"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -144,6 +146,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="false"
+                android:inputType="number"
                 android:hint="RG"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -157,6 +160,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="false"
+                android:inputType="number"
                 android:hint="CPF"/>
 
         </android.support.design.widget.TextInputLayout>

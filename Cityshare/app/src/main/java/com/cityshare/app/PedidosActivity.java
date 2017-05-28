@@ -64,6 +64,12 @@ public class PedidosActivity extends AppCompatActivity {
         pedidos = new ArrayList<>();
 
         new CarregarPedidos(CarregarPedidos.PENDENTES).execute();
+
+        int idNotificacao = getIntent().getIntExtra("idNotificacao", -1);
+
+        if( idNotificacao != -1 ) {
+            Log.d("IDNOTIFICACAO", String.valueOf(idNotificacao));
+        }
     }
 
     private class CarregarPedidos extends AsyncTask<Void, Void, Void> {

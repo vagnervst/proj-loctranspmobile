@@ -4,10 +4,13 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,16 +22,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.cityshare.app.model.Anuncio;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
+import com.cityshare.app.model.Usuario;
+import com.cityshare.app.services.NotificacoesListener;
+import com.cityshare.app.services.NotificacoesService;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,6 +48,8 @@ public class MainActivity extends AppCompatActivity
     SearchView searchView;
     Context context;
     ListView lv_anuncios;
+    ImageView iv_foto_perfil;
+    TextView txt_nome_usuario, txt_saldo_usuario;
 
     List<Anuncio> anuncios;
     @Override
@@ -47,6 +61,12 @@ public class MainActivity extends AppCompatActivity
 
         context = this;
 
+        Intent notificacoesService = new Intent(context, NotificacoesService.class);
+        startService( notificacoesService );
+
+        Intent listenerNotificacoes = new Intent(context, NotificacoesListener.class);
+        startService( listenerNotificacoes );
+
         lv_anuncios = (ListView) findViewById( R.id.lv_anuncios );
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -54,14 +74,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                if( !Login.is_logado(context) ) {
+                if( Login.is_logado(context) ) {
 
                     Intent intent = new Intent(context, AnunciarActivity.class);
-                    startActivity( intent );
-
-                } else {
-
-                    Intent intent = new Intent(context, MainActivity.class);
                     startActivity( intent );
 
                 }
@@ -76,6 +91,12 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerView = navigationView.inflateHeaderView( R.layout.nav_header_main );
+
+        iv_foto_perfil = (ImageView) headerView.findViewById(R.id.iv_foto_perfil);
+        txt_nome_usuario = (TextView) headerView.findViewById(R.id.txt_nome_usuario);
+        txt_saldo_usuario = (TextView) headerView.findViewById(R.id.txt_saldo_usuario);
 
         if( !Login.is_logado( context ) ) {
 
@@ -95,6 +116,7 @@ public class MainActivity extends AppCompatActivity
                 if( item.getItemId() == R.id.nav_entrar ) item.setVisible(false);
             }
 
+            new GetInfoUsuario().execute();
         }
 
         new BuscaAnuncios().execute();
@@ -160,14 +182,15 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_anuncios) {
 
         } else if (id == R.id.nav_solicitacoes) {
-
+            startActivity( new Intent( context, SolicitacoesActivity.class ) );
         } else if (id == R.id.nav_notificacoes) {
 
         } else if (id == R.id.nav_conta) {
             Intent configContaWin = new Intent( context, ConfiguracoesContaActivity.class );
             startActivity( configContaWin );
         } else if (id == R.id.nav_sair) {
-
+            Login.LogoutUsuario(context);
+            startActivity( new Intent(context, MainActivity.class) );
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -219,6 +242,76 @@ public class MainActivity extends AppCompatActivity
             preencherListaAnuncios();
 
             progress.hide();
+        }
+    }
+
+    private class CarregarFotoUsuario extends  AsyncTask<Void, Void, Void> {
+        private String url_foto;
+        private Bitmap foto_usuario = null;
+
+        private CarregarFotoUsuario(String url) {
+            this.url_foto = url;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                this.foto_usuario = Picasso.with(context).load(this.url_foto).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            if( foto_usuario != null ) {
+                RoundedBitmapDrawable round = RoundedBitmapDrawableFactory.create(null, this.foto_usuario);
+                round.setCircular(true);
+
+                iv_foto_perfil.setImageDrawable( round );
+            }
+        }
+    }
+
+    private class GetInfoUsuario extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progress;
+        Usuario usuario;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String url = getString(R.string.serverAddr) + "apis/android/get_info_usuario.php";
+
+            HashMap<String, String> parametros = new HashMap<>();
+            parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
+
+            String json = HttpRequest.post(url, parametros);
+            usuario = new Gson().fromJson(json, Usuario.class);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress.dismiss();
+
+            if( usuario != null ) {
+
+                String url_foto = getString(R.string.serverAddr) + "img/uploads/usuarios/" + usuario.getFotoPerfil();
+                new CarregarFotoUsuario(url_foto).execute();
+
+                txt_nome_usuario.setText( String.format(Locale.getDefault(), "%s %s", usuario.getNome(), usuario.getSobrenome()) );
+                txt_saldo_usuario.setText( String.format(Locale.getDefault(), "R$%.2f", usuario.getSaldo()) );
+            }
         }
     }
 
