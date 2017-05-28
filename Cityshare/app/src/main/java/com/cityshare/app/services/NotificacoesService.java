@@ -9,7 +9,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import com.cityshare.app.MainActivity;
 import com.cityshare.app.PedidosActivity;
@@ -46,7 +45,6 @@ public class NotificacoesService extends Service {
                 parametros.put("where", "n.idUsuarioDestinatario = " + id_usuario + " AND n.visualizada = 0");
 
                 String json = HttpRequest.post(url, parametros);
-                Log.d("JSONNOTIFICACOES", json);
 
                 Notificacao[] listaNotificacoes = new Gson().fromJson(json, Notificacao[].class);
 

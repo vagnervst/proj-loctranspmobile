@@ -42,6 +42,7 @@ import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.TipoCartaoCredito;
 import com.cityshare.app.model.Usuario;
+import com.cityshare.app.model.Utils;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -521,27 +522,6 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
         }
     }
 
-    private Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {
-        if (maxHeight > 0 && maxWidth > 0) {
-            int width = image.getWidth();
-            int height = image.getHeight();
-            float ratioBitmap = (float) width / (float) height;
-            float ratioMax = (float) maxWidth / (float) maxHeight;
-
-            int finalWidth = maxWidth;
-            int finalHeight = maxHeight;
-            if (ratioMax > 1) {
-                finalWidth = (int) ((float)maxHeight * ratioBitmap);
-            } else {
-                finalHeight = (int) ((float)maxWidth / ratioBitmap);
-            }
-            image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
-            return image;
-        } else {
-            return image;
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -573,7 +553,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
             try {
                 Bitmap mp = MediaStore.Images.Media.getBitmap(getContentResolver(), foto_selecionada);
-                mp = resize(mp, iv_foto_perfil.getWidth(), iv_foto_perfil.getHeight());
+                mp = Utils.resize(mp, iv_foto_perfil.getWidth(), iv_foto_perfil.getHeight());
                 nova_foto = mp;
 
                 iv_foto_perfil.setImageBitmap( mp );

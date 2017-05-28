@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_info_veiculo"
+        android:title="Veículo"
+        android:icon="@mipmap/ic_car_black"/>
+
+    <item android:id="@+id/navigation_info_valores"
+        android:title="Valores"
+        android:icon="@mipmap/ic_money" />
+
+</menu>

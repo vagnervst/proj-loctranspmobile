@@ -113,22 +113,9 @@
                 android:value="com.cityshare.app.DetalhesPedidoActivity" />
         </activity>
         <activity
-            android:name=".AnunciarActivity"
-            android:label="@string/title_activity_anunciar"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.cityshare.app.MainActivity" />
-        </activity>
-        <activity
             android:name=".ConfiguracoesContaActivity"
             android:label="@string/title_activity_configuracoes_conta"
             android:parentActivityName=".MainActivity">
-            android:name=".AnunciarActivity"
-            android:label="@string/title_activity_anunciar"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cityshare.app.MainActivity" />
@@ -157,6 +144,14 @@
         <activity
             android:name=".SolicitacoesActivity"
             android:label="@string/title_activity_solicitacoes"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.MainActivity" />
+        </activity>
+        <activity
+            android:name=".AnunciarActivity"
+            android:label="@string/title_activity_anunciar"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
