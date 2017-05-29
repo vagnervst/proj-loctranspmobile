@@ -5,18 +5,20 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageSwitcher;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ViewFlipper;
@@ -26,19 +28,24 @@ import com.cityshare.app.model.DatePickerFragment;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.TimePickerFragment;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class DetalhesAnuncio extends AppCompatActivity {
 
     private TextView titulo_anuncio, valor_diaria, valor_diaria_reserva, valor_combustivel, valor_quilometragem, valor_total, qtd_portas, tipo_combustivel, localizacao, limite_quilometragem, descricao_publicacao;
-    private ImageSwitcher imagens_anuncio;
+    private ViewPager imagens_anuncio;
     private FrameLayout content;
     private ViewFlipper flipper;
     private EditText dataRetirada, horaRetirada;
@@ -78,7 +85,7 @@ public class DetalhesAnuncio extends AppCompatActivity {
 
         context = this;
 
-        imagens_anuncio = (ImageSwitcher) findViewById(R.id.is_imagens_anuncio);
+        imagens_anuncio = (ViewPager) findViewById(R.id.vp_imagens_anuncio);
         titulo_anuncio = (TextView) findViewById(R.id.txt_titulo_anuncio);
         valor_diaria = (TextView) findViewById(R.id.txt_valor_diaria);
         valor_diaria_reserva = (TextView) findViewById(R.id.txt_valor_diaria_reserva);
@@ -258,6 +265,42 @@ public class DetalhesAnuncio extends AppCompatActivity {
         }
     }
 
+    private class GetImagensAnuncio extends AsyncTask<Void, Void, Void> {
+        private List<Bitmap> bitmaps = new ArrayList<>();
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String url = getString(R.string.serverAddr) + "img/uploads/publicacoes/";
+
+            try {
+                List<String> imagens_anuncio = Arrays.asList( anuncio.getImagemPrincipal(), anuncio.getImagemA(), anuncio.getImagemB(), anuncio.getImagemC(), anuncio.getImagemD() );
+
+                for( int i = 0; i < imagens_anuncio.size(); ++i ) {
+                    Bitmap imagem = Picasso.with(context).load( url + imagens_anuncio.get(i) ).get();
+
+                    if( imagem != null ) {
+                        bitmaps.add( imagem );
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            Log.d("IMAGENS", String.valueOf(bitmaps.size()));
+            SlideAdapter adapter = new SlideAdapter(context, this.bitmaps);
+
+            imagens_anuncio.setAdapter( adapter );
+        }
+    }
+
     private class GetInfoAnuncio extends AsyncTask<Void, Void, Void> {
         ProgressDialog progress;
 
@@ -295,6 +338,8 @@ public class DetalhesAnuncio extends AppCompatActivity {
             localizacao.setText( anuncio.getCidade() + ", " + anuncio.getEstado() );
             limite_quilometragem.setText( String.format(Locale.getDefault(), "%d", anuncio.getLimiteQuilometragem()) );
             descricao_publicacao.setText( anuncio.getDescricao() );
+
+            new GetImagensAnuncio().execute();
         }
     }
 }
