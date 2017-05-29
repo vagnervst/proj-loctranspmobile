@@ -7,7 +7,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/fab_margin">
+        android:padding="@dimen/fab_margin"
+        android:focusableInTouchMode="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,8 +25,8 @@
                 android:id="@+id/iv_foto_perfil"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:background="@android:color/transparent"
-                android:scaleType="fitCenter"
+                android:background="@drawable/border_image_button"
+                android:scaleType="fitXY"
                 android:adjustViewBounds="true"/>
 
         </LinearLayout>

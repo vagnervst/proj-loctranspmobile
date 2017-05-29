@@ -233,6 +233,12 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
         new GetInfoUsuario().execute();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity( new Intent(context, MainActivity.class) );
+    }
+
     public void desativar_entradas() {
         iv_foto_perfil.setEnabled( false );
         ColorMatrix matrix = new ColorMatrix();
@@ -857,6 +863,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
             progress.dismiss();
 
             if( usuario != null ) {
+                Picasso.with(context).invalidate( getString(R.string.serverAddr) + "img/uploads/usuarios/" + usuario.getFotoPerfil() );
                 Picasso.with(context).load( getString(R.string.serverAddr) + "img/uploads/usuarios/" + usuario.getFotoPerfil() ).into(iv_foto_perfil);
                 edt_nome.setText( usuario.getNome() );
                 edt_sobrenome.setText( usuario.getSobrenome() );

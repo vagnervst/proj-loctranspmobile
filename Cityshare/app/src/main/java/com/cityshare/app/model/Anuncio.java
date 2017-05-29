@@ -13,6 +13,10 @@ public class Anuncio {
     private String descricao;
     private String localizacao;
     private String imagemPrincipal;
+    private String imagemA;
+    private String imagemB;
+    private String imagemC;
+    private String imagemD;
     private String combustivel;
     private String cidade;
     private String estado;
@@ -139,5 +143,37 @@ public class Anuncio {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public String getImagemA() {
+        return imagemA;
+    }
+
+    public void setImagemA(String imagemA) {
+        this.imagemA = imagemA;
+    }
+
+    public String getImagemB() {
+        return imagemB;
+    }
+
+    public void setImagemB(String imagemB) {
+        this.imagemB = imagemB;
+    }
+
+    public String getImagemC() {
+        return imagemC;
+    }
+
+    public void setImagemC(String imagemC) {
+        this.imagemC = imagemC;
+    }
+
+    public String getImagemD() {
+        return imagemD;
+    }
+
+    public void setImagemD(String imagemD) {
+        this.imagemD = imagemD;
     }
 }

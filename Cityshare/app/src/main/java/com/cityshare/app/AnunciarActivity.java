@@ -4,11 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -25,22 +26,22 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.cityshare.app.model.Combustivel;
 import com.cityshare.app.model.Fabricante;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.TipoVeiculo;
 import com.cityshare.app.model.Transmissao;
-import com.cityshare.app.model.Utils;
 import com.cityshare.app.model.Veiculo;
 import com.google.gson.Gson;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static com.cityshare.app.model.HttpRequest.post;
 
@@ -72,7 +73,7 @@ public class AnunciarActivity extends AppCompatActivity {
     EditText txtValorQuilometragemExcedida;
 
     private final int GET_IMAGEM_PRINCIPAL = 1, GET_IMAGEM_A = 2, GET_IMAGEM_B = 3, GET_IMAGEM_C = 4, GET_IMAGEM_D = 5;
-    private Bitmap imagem_principal = null, imagem_a = null, imagem_b = null, imagem_c = null, imagem_d = null;
+    private Uri imagem_principal = null, imagem_a = null, imagem_b = null, imagem_c = null, imagem_d = null;
     private HashMap<String, String> parametros_pesquisa;
     private HashMap<String, String> parametros_anuncio;
     private String modo = "insert";
@@ -143,15 +144,6 @@ public class AnunciarActivity extends AppCompatActivity {
         parametros_pesquisa = new HashMap<>();
         parametros_anuncio = new HashMap<>();
 
-        txtTitulo.setText("titulo");
-        txtDescricao.setText("descricao");
-        txtQuilometragem.setText("100");
-        txtValorDiaria.setText("5.30");
-        txtValorCombustivel.setText("2.20");
-        txtLimiteQuilometragem.setText("100");
-        txtValorQuilometragemExcedida.setText("5");
-        txtValorVeiculo.setText("400");
-
         new BuscarTiposVeiculo().execute();
     }
 
@@ -177,127 +169,27 @@ public class AnunciarActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if( resultCode == RESULT_OK ) {
-            try {
-                switch( requestCode ) {
-                    case GET_IMAGEM_PRINCIPAL:
-                        imagem_principal = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-                        imagem_principal = Utils.resize(imagem_principal, ib_imagem_principal.getWidth(), ib_imagem_principal.getHeight());
-                        ib_imagem_principal.setImageBitmap(imagem_principal);
-                        break;
-                    case GET_IMAGEM_A:
-                        imagem_a = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-                        imagem_a = Utils.resize(imagem_a, ib_imagem_a.getWidth(), ib_imagem_a.getHeight());
-                        ib_imagem_a.setImageBitmap(imagem_a);
-                        break;
-                    case GET_IMAGEM_B:
-                        imagem_b = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-                        imagem_b = Utils.resize(imagem_b, ib_imagem_b.getWidth(), ib_imagem_b.getHeight());
-                        ib_imagem_b.setImageBitmap(imagem_b);
-                        break;
-                    case GET_IMAGEM_C:
-                        imagem_c = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-                        imagem_c = Utils.resize(imagem_c, ib_imagem_c.getWidth(), ib_imagem_c.getHeight());
-                        ib_imagem_c.setImageBitmap(imagem_c);
-                        break;
-                    case GET_IMAGEM_D:
-                        imagem_d = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-                        imagem_d = Utils.resize(imagem_d, ib_imagem_d.getWidth(), ib_imagem_d.getHeight());
-                        ib_imagem_d.setImageBitmap(imagem_d);
-                        break;
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            new CarregarImagem(requestCode, data.getData()).execute();
         }
     }
 
+    private String get_bytes_imagem(Uri imagem) {
+        try {
+            return Base64.encodeToString( Glide.with(context).load( imagem ).asBitmap().toBytes( Bitmap.CompressFormat.JPEG, 70 ).into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get(), Base64.DEFAULT );
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     private void preparar_entradas_para_envio() {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-        if( imagem_principal != null ) {
-            imagem_principal.compress(Bitmap.CompressFormat.JPEG, 100, stream );
-            String bytes_imagem = Base64.encodeToString( stream.toByteArray(), Base64.DEFAULT );
-
-            parametros_anuncio.put("imagemPrincipal", bytes_imagem);
-            stream.reset();
-        }
-
-        if( imagem_a != null ) {
-            imagem_a.compress(Bitmap.CompressFormat.JPEG, 100, stream );
-            String bytes_imagem = Base64.encodeToString( stream.toByteArray(), Base64.DEFAULT );
-
-            parametros_anuncio.put("imagemA", bytes_imagem);
-            stream.reset();
-        }
-
-        if( imagem_b != null ) {
-            imagem_b.compress(Bitmap.CompressFormat.JPEG, 100, stream );
-            String bytes_imagem = Base64.encodeToString( stream.toByteArray(), Base64.DEFAULT );
-
-            parametros_anuncio.put("imagemB", bytes_imagem);
-            stream.reset();
-        }
-
-        if( imagem_c != null ) {
-            imagem_c.compress(Bitmap.CompressFormat.JPEG, 100, stream );
-            String bytes_imagem = Base64.encodeToString( stream.toByteArray(), Base64.DEFAULT );
-
-            parametros_anuncio.put("imagemC", bytes_imagem);
-            stream.reset();
-        }
-
-        if( imagem_d != null ) {
-            imagem_d.compress(Bitmap.CompressFormat.JPEG, 100, stream );
-            String bytes_imagem = Base64.encodeToString( stream.toByteArray(), Base64.DEFAULT );
-
-            parametros_anuncio.put("imagemD", bytes_imagem);
-            stream.reset();
-        }
-
-        if( txtTitulo.getText() != null && !txtTitulo.getText().toString().trim().isEmpty() ) {
-            parametros_anuncio.put("titulo", txtTitulo.getText().toString().trim());
-        }
-
-        if( txtDescricao.getText() != null && !txtDescricao.getText().toString().trim().isEmpty() ) {
-            parametros_anuncio.put("descricao", txtDescricao.getText().toString().trim());
-        }
-
-        if( txtValorDiaria.getText() != null && !txtValorDiaria.getText().toString().trim().isEmpty() ) {
-            parametros_anuncio.put("valorDiaria", txtValorDiaria.getText().toString().trim());
-        }
-
-        if( txtValorCombustivel.getText() != null && !txtValorCombustivel.getText().toString().trim().isEmpty() ) {
-            parametros_anuncio.put("valorCombustivel", txtValorCombustivel.getText().toString().trim());
-        }
-
-        if( txtValorQuilometragemExcedida.getText() != null && !txtValorQuilometragemExcedida.getText().toString().trim().isEmpty() ) {
-            parametros_anuncio.put("valorQuilometragem", txtValorQuilometragemExcedida.getText().toString().trim());
-        }
-
-        if( txtValorVeiculo.getText() != null && !txtValorVeiculo.getText().toString().trim().isEmpty() ) {
-            parametros_anuncio.put("valorVeiculo", txtValorVeiculo.getText().toString().trim());
-        }
-
-        if( txtQuilometragem.getText() != null && !txtQuilometragem.getText().toString().trim().isEmpty() ) {
-            parametros_anuncio.put("quilometragemAtual", txtQuilometragem.getText().toString().trim());
-        }
-
-        if( txtLimiteQuilometragem.getText() != null && !txtLimiteQuilometragem.getText().toString().trim().isEmpty() ) {
-            parametros_anuncio.put("limiteQuilometragem", txtLimiteQuilometragem.getText().toString().trim());
-        }
-
-        if( spnModeloVeiculo.getSelectedItem() != null ) {
-            Veiculo veiculo_selecionado = (Veiculo) spnModeloVeiculo.getSelectedItem();
-
-            parametros_anuncio.put("idVeiculo", String.valueOf(veiculo_selecionado.getId()));
-        }
 
         if( !txtTitulo.getText().toString().trim().isEmpty() &&
                 !txtDescricao.getText().toString().trim().isEmpty() &&
                 !txtValorDiaria.getText().toString().trim().isEmpty() &&
-                !txtValorCombustivel.getText().toString().trim().isEmpty() &&
                 !txtValorQuilometragemExcedida.getText().toString().trim().isEmpty() &&
                 !txtValorVeiculo.getText().toString().trim().isEmpty() &&
                 !txtQuilometragem.getText().toString().trim().isEmpty() &&
@@ -638,16 +530,75 @@ public class AnunciarActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             progress = ProgressDialog.show(context, "Salvando", "Aguarde");
+
+            if( txtTitulo.getText() != null && !txtTitulo.getText().toString().trim().isEmpty() ) {
+                parametros_anuncio.put("titulo", txtTitulo.getText().toString().trim());
+            }
+
+            if( txtDescricao.getText() != null && !txtDescricao.getText().toString().trim().isEmpty() ) {
+                parametros_anuncio.put("descricao", txtDescricao.getText().toString().trim());
+            }
+
+            if( txtValorDiaria.getText() != null && !txtValorDiaria.getText().toString().trim().isEmpty() ) {
+                parametros_anuncio.put("valorDiaria", txtValorDiaria.getText().toString().trim());
+            }
+
+            if( txtValorCombustivel.getText() != null && !txtValorCombustivel.getText().toString().trim().isEmpty() ) {
+                parametros_anuncio.put("valorCombustivel", txtValorCombustivel.getText().toString().trim());
+            }
+
+            if( txtValorQuilometragemExcedida.getText() != null && !txtValorQuilometragemExcedida.getText().toString().trim().isEmpty() ) {
+                parametros_anuncio.put("valorQuilometragem", txtValorQuilometragemExcedida.getText().toString().trim());
+            }
+
+            if( txtValorVeiculo.getText() != null && !txtValorVeiculo.getText().toString().trim().isEmpty() ) {
+                parametros_anuncio.put("valorVeiculo", txtValorVeiculo.getText().toString().trim());
+            }
+
+            if( txtQuilometragem.getText() != null && !txtQuilometragem.getText().toString().trim().isEmpty() ) {
+                parametros_anuncio.put("quilometragemAtual", txtQuilometragem.getText().toString().trim());
+            }
+
+            if( txtLimiteQuilometragem.getText() != null && !txtLimiteQuilometragem.getText().toString().trim().isEmpty() ) {
+                parametros_anuncio.put("limiteQuilometragem", txtLimiteQuilometragem.getText().toString().trim());
+            }
+
+            if( spnModeloVeiculo.getSelectedItem() != null ) {
+                Veiculo veiculo_selecionado = (Veiculo) spnModeloVeiculo.getSelectedItem();
+
+                parametros_anuncio.put("idVeiculo", String.valueOf(veiculo_selecionado.getId()));
+            }
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+
+            if( imagem_principal != null ) {
+                parametros_anuncio.put("imagemPrincipal", get_bytes_imagem( imagem_principal ) );
+            }
+
+            if( imagem_a != null ) {
+                parametros_anuncio.put("imagemA", get_bytes_imagem( imagem_a ) );
+            }
+
+            if( imagem_b != null ) {
+                parametros_anuncio.put("imagemB", get_bytes_imagem( imagem_b ) );
+            }
+
+            if( imagem_c != null ) {
+                parametros_anuncio.put("imagemC", get_bytes_imagem( imagem_c ) );
+            }
+
+            if( imagem_d != null ) {
+                parametros_anuncio.put("imagemD", get_bytes_imagem( imagem_d ) );
+            }
+
             String url = getString(R.string.serverAddr) + "apis/android/anunciar.php";
 
             String json = HttpRequest.post(url, parametros_anuncio);
             Log.d("JSONANUNCIO", json);
 
-            //resultado = new Gson().fromJson(json, Boolean.class);
+            resultado = new Gson().fromJson(json, Boolean.class);
 
             return null;
         }
@@ -656,9 +607,66 @@ public class AnunciarActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             progress.dismiss();
-
             parametros_anuncio = new HashMap<>();
+
+            if( resultado ) {
+                startActivity( new Intent(context, MainActivity.class) );
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Erro").setMessage("Houve um erro ao tentar salvar o anúncio");
+                builder.create().show();
+            }
+
         }
     }
 
+    private class CarregarImagem extends AsyncTask<Void, Void, Void> {
+        private int requestCode;
+        private Uri uri;
+        private Bitmap imagem;
+
+        private CarregarImagem(int code, Uri uri) {
+            this.requestCode = code;
+            this.uri = uri;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                this.imagem = Glide.with(context).load(this.uri).asBitmap().into(100, 100).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            switch( this.requestCode ) {
+                case GET_IMAGEM_PRINCIPAL:
+                    imagem_principal = this.uri;
+                    ib_imagem_principal.setImageBitmap(this.imagem);
+                    break;
+                case GET_IMAGEM_A:
+                    imagem_a = this.uri;
+                    ib_imagem_a.setImageBitmap(this.imagem);
+                    break;
+                case GET_IMAGEM_B:
+                    imagem_b = this.uri;
+                    ib_imagem_b.setImageBitmap(this.imagem);
+                    break;
+                case GET_IMAGEM_C:
+                    imagem_c = this.uri;
+                    ib_imagem_c.setImageBitmap(this.imagem);
+                    break;
+                case GET_IMAGEM_D:
+                    imagem_d = this.uri;
+                    ib_imagem_d.setImageBitmap(this.imagem);
+                    break;
+            }
+        }
+    }
 }

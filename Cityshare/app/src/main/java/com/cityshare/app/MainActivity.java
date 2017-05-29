@@ -256,6 +256,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params) {
             try {
+                Picasso.with(context).invalidate(this.url_foto);
                 this.foto_usuario = Picasso.with(context).load(this.url_foto).get();
             } catch (IOException e) {
                 e.printStackTrace();

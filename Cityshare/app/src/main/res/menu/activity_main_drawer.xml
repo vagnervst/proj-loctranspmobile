@@ -3,23 +3,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_entrar"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@mipmap/ic_entrar_black"
             android:title="Entrar" />
         <item
             android:id="@+id/nav_pedidos"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@mipmap/ic_assignment_black"
             android:title="Meus Pedidos" />
         <item
             android:id="@+id/nav_anuncios"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@mipmap/ic_car_black"
             android:title="Meus Anúncios" />
         <item
             android:id="@+id/nav_solicitacoes"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@mipmap/ic_solicitacoes_black"
             android:title="Solicitações" />
         <item
             android:id="@+id/nav_notificacoes"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_notifications_black_24dp"
             android:title="Notificações" />
         <item
             android:id="@+id/nav_conta"
@@ -27,7 +27,7 @@
             android:title="Conta" />
         <item
             android:id="@+id/nav_sair"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@mipmap/ic_off_black"
             android:title="Sair" />
     </group>
 </menu>
