@@ -27,6 +27,8 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cityshare.app.model.Anuncio;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
@@ -34,13 +36,12 @@ import com.cityshare.app.model.Usuario;
 import com.cityshare.app.services.NotificacoesListener;
 import com.cityshare.app.services.NotificacoesService;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -256,9 +257,10 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Picasso.with(context).invalidate(this.url_foto);
-                this.foto_usuario = Picasso.with(context).load(this.url_foto).get();
-            } catch (IOException e) {
+                this.foto_usuario = Glide.with(context).load(this.url_foto).asBitmap().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(100, 100).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
                 e.printStackTrace();
             }
             return null;

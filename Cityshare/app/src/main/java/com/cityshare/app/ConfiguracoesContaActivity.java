@@ -6,12 +6,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,6 +34,8 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.ViewFlipper;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cityshare.app.model.Banco;
 import com.cityshare.app.model.Cidade;
 import com.cityshare.app.model.Cnh;
@@ -42,12 +44,9 @@ import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.TipoCartaoCredito;
 import com.cityshare.app.model.Usuario;
-import com.cityshare.app.model.Utils;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -56,6 +55,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class ConfiguracoesContaActivity extends AppCompatActivity {
 
@@ -279,6 +279,8 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
         private EnviarNovosDadosParaApi(HashMap<String, String> parametros) {
             this.parametros = parametros;
+
+            Log.d("MODO", this.parametros.get("modo"));
         }
 
         @Override
@@ -296,6 +298,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
             Log.d("UPDATE", json);
 
             resultado = new Gson().fromJson(json, Boolean.class);
+            resultado = false;
 
             return null;
         }
@@ -314,9 +317,9 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
         HashMap<String, String> parametros = new HashMap<>();
 
         if( indice_view_ativa == 0 ) {
-            if( nova_foto != null ) {
-                parametros.put("modo", "pessoal");
+            parametros.put("modo", "pessoal");
 
+            if( nova_foto != null ) {
                 ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
                 nova_foto.compress(Bitmap.CompressFormat.JPEG, 100, byteArray);
                 byte[] bytes_imagem = byteArray.toByteArray();
@@ -556,17 +559,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
         if( requestCode == GET_IMAGE && resultCode == RESULT_OK ) {
             Uri foto_selecionada = data.getData();
-
-            try {
-                Bitmap mp = MediaStore.Images.Media.getBitmap(getContentResolver(), foto_selecionada);
-                mp = Utils.resize(mp, iv_foto_perfil.getWidth(), iv_foto_perfil.getHeight());
-                nova_foto = mp;
-
-                iv_foto_perfil.setImageBitmap( mp );
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            new CarregarFoto(foto_selecionada).execute();
         }
 
     }
@@ -863,8 +856,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
             progress.dismiss();
 
             if( usuario != null ) {
-                Picasso.with(context).invalidate( getString(R.string.serverAddr) + "img/uploads/usuarios/" + usuario.getFotoPerfil() );
-                Picasso.with(context).load( getString(R.string.serverAddr) + "img/uploads/usuarios/" + usuario.getFotoPerfil() ).into(iv_foto_perfil);
+                Glide.with(context).load( getString(R.string.serverAddr) + "img/uploads/usuarios/" + usuario.getFotoPerfil() ).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(iv_foto_perfil);
                 edt_nome.setText( usuario.getNome() );
                 edt_sobrenome.setText( usuario.getSobrenome() );
 
@@ -1030,6 +1022,34 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
             edt_numero_cnh.setText(String.format(Locale.getDefault(), "%d", cnh.getNumeroRegistro()));
 
             return v;
+        }
+    }
+
+    private class CarregarFoto extends AsyncTask<Void, Void, Void> {
+        private Uri uri;
+
+        private CarregarFoto(Uri uri) {
+            this.uri = uri;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                byte[] bytes = Glide.with(context).load(this.uri).asBitmap().toBytes(Bitmap.CompressFormat.JPEG, 100).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(200, 200).get();
+
+                nova_foto = BitmapFactory.decodeByteArray( bytes, 0, bytes.length );
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            iv_foto_perfil.setImageBitmap( nova_foto );
         }
     }
 }
