@@ -596,7 +596,6 @@ public class AnunciarActivity extends AppCompatActivity {
             String url = getString(R.string.serverAddr) + "apis/android/anunciar.php";
 
             String json = HttpRequest.post(url, parametros_anuncio);
-            Log.d("JSONANUNCIO", json);
 
             resultado = new Gson().fromJson(json, Boolean.class);
 
