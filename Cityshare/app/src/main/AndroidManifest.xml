@@ -157,6 +157,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cityshare.app.MainActivity" />
         </activity>
+        <activity
+            android:name=".MeusAnunciosActivity"
+            android:label="@string/title_activity_meus_anuncios"></activity>
     </application>
 
 </manifest>
