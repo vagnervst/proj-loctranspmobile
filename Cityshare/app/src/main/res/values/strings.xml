@@ -13,7 +13,7 @@
     <string name="title_activity_confirmar_info_reserva">Confirmar Informações para Reserva</string>
     <string name="title_activity_pedido_enviado">Pedido Enviado para Avaliação</string>
     <string name="title_activity_login">Login</string>
-    <string name="serverAddr">http://192.168.0.107/Web/</string>
+    <string name="serverAddr">http://192.168.1.106/LeonardoPonciano/proj-loctranspweb-master/</string>
     <string name="title_activity_pedidos">Pedidos</string>
     <string name="title_activity_detalhes_pedido">Detalhes do Pedido</string>
     <string name="title_activity_confirmar_local">Confirmar Local</string>
@@ -30,4 +30,5 @@
     <string name="title_activity_solicitacoes">Solicitacoes</string>
     <string name="title_activity_anunciar">Anunciar</string>
     <string name="title_activity_notificacoes">Notificações</string>
+    <string name="title_activity_meus_anuncios">MeusAnunciosActivity</string>
 </resources>
