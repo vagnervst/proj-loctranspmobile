@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cityshare.app.model.Anuncio;
+import com.cityshare.app.model.Server;
 import com.cityshare.app.model.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -45,7 +46,7 @@ public class AnunciosAdapter extends ArrayAdapter<Anuncio> {
         Anuncio anuncio = getItem(position);
 
         ImageView img_veiculo = (ImageView) v.findViewById(R.id.img_veiculo);
-        String url = getContext().getString(R.string.serverAddr) + "/img/uploads/publicacoes/" + anuncio.getImagemPrincipal();
+        String url = Server.servidor + "/img/uploads/publicacoes/" + anuncio.getImagemPrincipal();
         new GetImagem(url, img_veiculo).execute();
 
         TextView titulo_anuncio = (TextView) v.findViewById(R.id.txt_titulo_anuncio);
