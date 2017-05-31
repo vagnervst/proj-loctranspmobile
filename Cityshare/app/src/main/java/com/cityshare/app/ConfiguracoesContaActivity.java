@@ -42,6 +42,7 @@ import com.cityshare.app.model.Cnh;
 import com.cityshare.app.model.Estado;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
+import com.cityshare.app.model.Server;
 import com.cityshare.app.model.TipoCartaoCredito;
 import com.cityshare.app.model.Usuario;
 import com.google.gson.Gson;
@@ -291,7 +292,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/set_info_usuario.php";
+            String url = Server.servidor + "apis/android/set_info_usuario.php";
 
             parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
             String json = HttpRequest.post(url, parametros);
@@ -585,7 +586,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/crud_cnh.php";
+            String url = Server.servidor + "apis/android/crud_cnh.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idCnh", String.valueOf(cnh_alvo.getId()));
@@ -670,7 +671,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_bancos.php";
+            String url = Server.servidor + "apis/android/get_bancos.php";
 
             String json = HttpRequest.get(url);
             listaBancos = new Gson().fromJson(json, Banco[].class);
@@ -715,7 +716,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_tipos_cartao.php";
+            String url = Server.servidor + "apis/android/get_tipos_cartao.php";
 
             String json = HttpRequest.get(url);
 
@@ -758,7 +759,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_cidades.php";
+            String url = Server.servidor + "apis/android/get_cidades.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idEstado", String.valueOf( this.idEstado ));
@@ -802,7 +803,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_estados.php";
+            String url = Server.servidor + "apis/android/get_estados.php";
 
             String json = HttpRequest.get(url);
 
@@ -840,7 +841,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_info_usuario.php";
+            String url = Server.servidor + "apis/android/get_info_usuario.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
@@ -856,7 +857,7 @@ public class ConfiguracoesContaActivity extends AppCompatActivity {
             progress.dismiss();
 
             if( usuario != null ) {
-                Glide.with(context).load( getString(R.string.serverAddr) + "img/uploads/usuarios/" + usuario.getFotoPerfil() ).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(iv_foto_perfil);
+                Glide.with(context).load( Server.servidor + "img/uploads/usuarios/" + usuario.getFotoPerfil() ).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(iv_foto_perfil);
                 edt_nome.setText( usuario.getNome() );
                 edt_sobrenome.setText( usuario.getSobrenome() );
 

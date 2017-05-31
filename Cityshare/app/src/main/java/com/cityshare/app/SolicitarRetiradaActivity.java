@@ -17,6 +17,7 @@ import android.widget.EditText;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Pedido;
+import com.cityshare.app.model.Server;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -117,7 +118,7 @@ public class SolicitarRetiradaActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/pedido_solicitacao.php";
+            String url = Server.servidor + "apis/pedido_solicitacao.php";
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idPedido", String.valueOf(idPedido));
             parametros.put("codigoSeguranca", codigo_seguranca);

@@ -16,6 +16,7 @@ import com.cityshare.app.R;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Notificacao;
+import com.cityshare.app.model.Server;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public class NotificacoesService extends Service {
             @Override
             public void run() {
 
-                String url = getString(R.string.serverAddr) + "apis/get_notificacoes_usuario.php";
+                String url = Server.servidor + "apis/get_notificacoes_usuario.php";
                 HashMap<String, String> parametros = new HashMap<String, String>();
                 int id_usuario = Login.getId_usuario(getApplicationContext());
 
