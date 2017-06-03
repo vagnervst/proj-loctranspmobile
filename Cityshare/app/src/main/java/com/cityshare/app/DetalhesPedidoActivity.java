@@ -26,6 +26,7 @@ import com.cityshare.app.model.DoubleTypeAdapter;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Pedido;
+import com.cityshare.app.model.Server;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -518,7 +519,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString( R.string.serverAddr ) + "apis/android/get_info_pedido.php";
+            String url = Server.servidor + "apis/android/get_info_pedido.php";
             HashMap<String, String> parametros = new HashMap<>();
 
             parametros.put("idPedido", String.valueOf(idPedido));
@@ -578,7 +579,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/pedido_solicitacao.php";
+            String url = Server.servidor + "apis/pedido_solicitacao.php";
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idPedido", String.valueOf(idPedido));
             parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
@@ -613,7 +614,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/pedido_definir_pendencias.php";
+            String url = Server.servidor + "apis/pedido_definir_pendencias.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
@@ -669,7 +670,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/pedido_realizar_pagamento.php";
+            String url = Server.servidor + "apis/pedido_realizar_pagamento.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idPedido", String.valueOf(idPedido));
@@ -725,7 +726,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/pedido_avaliacao.php";
+            String url = Server.servidor + "apis/pedido_avaliacao.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("notaAvaliacao", String.valueOf(notaAvaliacao));

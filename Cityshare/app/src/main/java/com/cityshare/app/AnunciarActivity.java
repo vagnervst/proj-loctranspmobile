@@ -32,6 +32,7 @@ import com.cityshare.app.model.Combustivel;
 import com.cityshare.app.model.Fabricante;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
+import com.cityshare.app.model.Server;
 import com.cityshare.app.model.TipoVeiculo;
 import com.cityshare.app.model.Transmissao;
 import com.cityshare.app.model.Veiculo;
@@ -280,7 +281,7 @@ public class AnunciarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/listar_tipo_veiculo.php";
+            String url = Server.servidor + "apis/android/listar_tipo_veiculo.php";
             HashMap<String, String> parametros = new HashMap<>();
 
             String json = post(url, parametros);
@@ -312,7 +313,7 @@ public class AnunciarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_fabricantes.php";
+            String url = Server.servidor + "apis/android/get_fabricantes.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idTipoVeiculo", String.valueOf(idTipoVeiculo));
@@ -365,7 +366,7 @@ public class AnunciarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_combustiveis.php";
+            String url = Server.servidor + "apis/android/get_combustiveis.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idTipoVeiculo", String.valueOf(this.idTipoVeiculo));
@@ -432,7 +433,7 @@ public class AnunciarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/listar_transmissao.php";
+            String url = Server.servidor + "apis/android/listar_transmissao.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idTipoVeiculo", String.valueOf(this.idTipoVeiculo));
@@ -493,7 +494,7 @@ public class AnunciarActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_veiculos.php";
+            String url = Server.servidor + "apis/android/get_veiculos.php";
 
             String json = HttpRequest.post(url, parametros_pesquisa);
 
@@ -593,7 +594,7 @@ public class AnunciarActivity extends AppCompatActivity {
                 parametros_anuncio.put("imagemD", get_bytes_imagem( imagem_d ) );
             }
 
-            String url = getString(R.string.serverAddr) + "apis/android/anunciar.php";
+            String url = Server.servidor + "apis/android/anunciar.php";
 
             String json = HttpRequest.post(url, parametros_anuncio);
 

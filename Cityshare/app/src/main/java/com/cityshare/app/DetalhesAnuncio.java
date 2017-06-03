@@ -26,6 +26,7 @@ import android.widget.ViewFlipper;
 import com.cityshare.app.model.Anuncio;
 import com.cityshare.app.model.DatePickerFragment;
 import com.cityshare.app.model.HttpRequest;
+import com.cityshare.app.model.Server;
 import com.cityshare.app.model.TimePickerFragment;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
@@ -270,7 +271,7 @@ public class DetalhesAnuncio extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "img/uploads/publicacoes/";
+            String url = Server.servidor + "img/uploads/publicacoes/";
 
             try {
                 List<String> imagens_anuncio = Arrays.asList( anuncio.getImagemPrincipal(), anuncio.getImagemA(), anuncio.getImagemB(), anuncio.getImagemC(), anuncio.getImagemD() );
@@ -312,7 +313,7 @@ public class DetalhesAnuncio extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_info_publicacao.php";
+            String url = Server.servidor + "apis/android/get_info_publicacao.php";
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idPublicacao", String.valueOf(id_anuncio));
 

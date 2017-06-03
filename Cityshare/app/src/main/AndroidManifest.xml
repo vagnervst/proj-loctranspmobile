@@ -157,6 +157,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cityshare.app.MainActivity" />
         </activity>
+        <activity android:name=".ConfiguracaoServidorActivity" />
+        <activity
+            android:name=".NotificacoesActivity"
+            android:label="@string/title_activity_notificacoes"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

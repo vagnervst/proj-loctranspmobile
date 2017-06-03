@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Pedido;
+import com.cityshare.app.model.Server;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -82,7 +83,7 @@ public class SolicitacoesActivity extends AppCompatActivity {
     }
 
     private Pedido[] getSolicitacoes(HashMap<String, String> parametros) {
-        String url = getString(R.string.serverAddr) + "apis/android/get_solicitacoes.php";
+        String url = Server.servidor + "apis/android/get_solicitacoes.php";
 
         String json = HttpRequest.post(url, parametros);
         Log.d("JSONSOLICITACOES", json);
@@ -234,7 +235,7 @@ public class SolicitacoesActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_solicitacoes.php";
+            String url = Server.servidor + "apis/android/get_solicitacoes.php";
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("modo", modo);
             parametros.put("idSolicitacao", String.valueOf(idPedido));
@@ -274,7 +275,7 @@ public class SolicitacoesActivity extends AppCompatActivity {
 
             txt_nome_usuario.setText( String.format(Locale.getDefault(), "%s %s", pedido.getNomeLocatario(), pedido.getSobrenomeLocatario().charAt(0)) );
 
-            String url = getString(R.string.serverAddr) + "img/uploads/usuarios/" + pedido.getImagemPerfilLocatario();
+            String url = Server.servidor + "img/uploads/usuarios/" + pedido.getImagemPerfilLocatario();
             new GetImagemSolicitacao(url, iv_foto_usuario, true).execute();
 
             txt_localizacao_usuario.setText( String.format(Locale.getDefault(), "%s, %s", pedido.getEstadoLocatario(), pedido.getCidadeLocatario()) );
@@ -330,7 +331,7 @@ public class SolicitacoesActivity extends AppCompatActivity {
             final Pedido pedido = getItem(position);
 
             if( pedido.getImagemPrincipal() != null ) {
-                String url_imagem = getString(R.string.serverAddr) + "img/uploads/publicacoes/" + pedido.getImagemPrincipal();
+                String url_imagem = Server.servidor + "img/uploads/publicacoes/" + pedido.getImagemPrincipal();
                 new GetImagemSolicitacao(url_imagem, foto_veiculo, false).execute();
             }
 

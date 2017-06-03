@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.cityshare.app.model.Cnh;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
+import com.cityshare.app.model.Server;
 import com.cityshare.app.model.Usuario;
 import com.google.gson.Gson;
 
@@ -109,7 +110,7 @@ public class ConfirmarInfoReserva extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_info_usuario.php";
+            String url = Server.servidor + "apis/android/get_info_usuario.php";
 
             HashMap<String, String> parametros = new HashMap<>();
 
@@ -155,7 +156,7 @@ public class ConfirmarInfoReserva extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
 
-            String url = getString(R.string.serverAddr) + "apis/android/gerar_pedido.php";
+            String url = Server.servidor + "apis/android/gerar_pedido.php";
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idPublicacao", String.valueOf(id_anuncio));
 
