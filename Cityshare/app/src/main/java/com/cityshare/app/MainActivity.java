@@ -68,6 +68,11 @@ public class MainActivity extends AppCompatActivity
             return;
         }*/
 
+        if( Server.servidor.isEmpty() ) {
+            startActivity(new Intent(context, ConfiguracaoServidorActivity.class));
+            return;
+        }
+
         Intent notificacoesService = new Intent(context, NotificacoesService.class);
         startService( notificacoesService );
 
@@ -187,7 +192,7 @@ public class MainActivity extends AppCompatActivity
             Intent pedidosWin = new Intent( context, PedidosActivity.class );
             startActivity( pedidosWin );
         } else if (id == R.id.nav_anuncios) {
-
+            startActivity( new Intent( context, MeusAnunciosActivity.class ) );
         } else if (id == R.id.nav_solicitacoes) {
             startActivity( new Intent( context, SolicitacoesActivity.class ) );
         } else if (id == R.id.nav_notificacoes) {

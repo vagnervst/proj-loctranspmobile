@@ -5,5 +5,5 @@ package com.cityshare.app.model;
  */
 
 public class Server {
-    public static String servidor = "http://www.mobcityshare.com.br/";
+    public static String servidor = "http://192.168.0.107/Web/";
 }

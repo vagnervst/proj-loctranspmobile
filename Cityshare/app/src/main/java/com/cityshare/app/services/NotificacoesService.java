@@ -41,9 +41,9 @@ public class NotificacoesService extends Service {
             @Override
             public void run() {
 
-
-                HashMap<String, String> parametros = new HashMap<String, String>();
                 String url = Server.servidor + "apis/get_notificacoes_usuario.php";
+                HashMap<String, String> parametros = new HashMap<String, String>();
+
                 int id_usuario = Login.getId_usuario(getApplicationContext());
 
                 parametros.put("where", "n.idUsuarioDestinatario = " + id_usuario + " AND n.visualizada = 0");
