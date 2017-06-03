@@ -82,7 +82,7 @@ public class ConfirmarLocalActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString( R.string.serverAddr ) + "apis/android/get_info_pedido.php";
+            String url = Server.servidor + "apis/android/get_info_pedido.php";
             HashMap<String, String> parametros = new HashMap<>();
 
             parametros.put("idPedido", String.valueOf(idPedido));

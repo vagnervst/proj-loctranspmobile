@@ -17,6 +17,7 @@ import android.widget.ListView;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Pedido;
+import com.cityshare.app.model.Server;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class PedidosActivity extends AppCompatActivity {
         int idNotificacao = getIntent().getIntExtra("idNotificacao", -1);
 
         if( idNotificacao != -1 ) {
-            Log.d("IDNOTIFICACAO", String.valueOf(idNotificacao));
+
         }
     }
 
@@ -89,7 +90,7 @@ public class PedidosActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString( R.string.serverAddr ) + "apis/android/listar_pedidos.php";
+            String url = Server.servidor + "apis/android/listar_pedidos.php";
             int id_usuario = Login.getId_usuario( context );
 
             HashMap<String, String> parametros = new HashMap<>();
