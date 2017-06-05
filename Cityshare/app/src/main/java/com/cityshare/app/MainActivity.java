@@ -34,7 +34,6 @@ import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Server;
 import com.cityshare.app.model.Usuario;
-import com.cityshare.app.services.NotificacoesListener;
 import com.cityshare.app.services.NotificacoesService;
 import com.google.gson.Gson;
 
@@ -63,10 +62,10 @@ public class MainActivity extends AppCompatActivity
 
         context = this;
 
-        /*if( Server.servidor.isEmpty() ) {
+        if( Server.servidor.isEmpty() ) {
             startActivity(new Intent(context, ConfiguracaoServidorActivity.class));
             return;
-        }*/
+        }
 
         if( Server.servidor.isEmpty() ) {
             startActivity(new Intent(context, ConfiguracaoServidorActivity.class));
@@ -75,9 +74,6 @@ public class MainActivity extends AppCompatActivity
 
         Intent notificacoesService = new Intent(context, NotificacoesService.class);
         startService( notificacoesService );
-
-        Intent listenerNotificacoes = new Intent(context, NotificacoesListener.class);
-        startService( listenerNotificacoes );
 
         lv_anuncios = (ListView) findViewById( R.id.lv_anuncios );
 
@@ -115,7 +111,7 @@ public class MainActivity extends AppCompatActivity
             for( int i = 0; i < navigationView.getMenu().size(); ++i ) {
                 MenuItem item = navigationView.getMenu().getItem(i);
 
-                if( item.getItemId() != R.id.nav_entrar ) item.setEnabled(false);
+                if( item.getItemId() != R.id.nav_entrar && item.getItemId() != R.id.nav_cadastro ) item.setEnabled(false);
                 if( item.getItemId() == R.id.nav_sair ) item.setVisible(false);
             }
 
@@ -124,8 +120,8 @@ public class MainActivity extends AppCompatActivity
             for( int i = 0; i < navigationView.getMenu().size(); ++i ) {
                 MenuItem item = navigationView.getMenu().getItem(i);
 
-                if( item.getItemId() != R.id.nav_entrar ) item.setEnabled(true);
-                if( item.getItemId() == R.id.nav_entrar ) item.setVisible(false);
+                if( item.getItemId() != R.id.nav_entrar || item.getItemId() != R.id.nav_cadastro ) item.setEnabled(true);
+                if( item.getItemId() == R.id.nav_entrar || item.getItemId() == R.id.nav_cadastro ) item.setVisible(false);
             }
 
             new GetInfoUsuario().execute();
@@ -187,6 +183,9 @@ public class MainActivity extends AppCompatActivity
 
         if ( id == R.id.nav_entrar ) {
             Intent loginWin = new Intent( context, LoginActivity.class );
+            startActivity( loginWin );
+        } else if( id == R.id.nav_cadastro ) {
+            Intent loginWin = new Intent( context, CadastroActivity.class );
             startActivity( loginWin );
         } else if (id == R.id.nav_pedidos) {
             Intent pedidosWin = new Intent( context, PedidosActivity.class );

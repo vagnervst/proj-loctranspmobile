@@ -46,6 +46,13 @@
             android:text="Visualizar Pendências" />
 
         <Button
+            android:id="@+id/btn_avaliar_locacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="Avaliar Locação" />
+
+        <Button
             android:id="@+id/btn_cancelar_locacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

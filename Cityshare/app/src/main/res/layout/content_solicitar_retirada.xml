@@ -13,6 +13,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:text="Digite o PIN do cartão cadastrado em sua conta" />
 
     <android.support.design.widget.TextInputLayout
@@ -23,7 +24,8 @@
             android:id="@+id/txt_codigo_seguranca"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
+            android:inputType="numberPassword"
+            android:maxLength="4"
             android:hint="Digite o código de segurança do cartão"/>
 
     </android.support.design.widget.TextInputLayout>

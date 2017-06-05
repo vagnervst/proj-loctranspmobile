@@ -30,5 +30,6 @@
     <string name="title_activity_solicitacoes">Solicitacoes</string>
     <string name="title_activity_anunciar">Anunciar</string>
     <string name="title_activity_notificacoes">Notificações</string>
+    <string name="title_activity_cadastro">CadastroActivity</string>
     <string name="title_activity_meus_anuncios">MeusAnunciosActivity</string>
 </resources>

@@ -19,13 +19,18 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ViewFlipper;
 
+import com.bumptech.glide.Glide;
 import com.cityshare.app.model.Anuncio;
+import com.cityshare.app.model.Avaliacao;
 import com.cityshare.app.model.DatePickerFragment;
 import com.cityshare.app.model.HttpRequest;
+import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Server;
 import com.cityshare.app.model.TimePickerFragment;
 import com.google.gson.Gson;
@@ -47,10 +52,14 @@ public class DetalhesAnuncio extends AppCompatActivity {
 
     private TextView titulo_anuncio, valor_diaria, valor_diaria_reserva, valor_combustivel, valor_quilometragem, valor_total, qtd_portas, tipo_combustivel, localizacao, limite_quilometragem, descricao_publicacao;
     private ViewPager imagens_anuncio;
+    private ImageView iv_foto_locador;
+    private TextView txt_nome_locador, txt_localizacao_locador;
     private FrameLayout content;
     private ViewFlipper flipper;
     private EditText dataRetirada, horaRetirada;
     private EditText dataEntrega, horaEntrega;
+    private ListView lv_avaliacoes_locador;
+    private BottomNavigationView bottomNavigationView;
 
     Context context;
     Menu activity_menu;
@@ -68,9 +77,11 @@ public class DetalhesAnuncio extends AppCompatActivity {
                     activity_menu.getItem(0).setVisible(false);
                     return true;
                 case R.id.navigation_locador:
+                    flipper.setDisplayedChild(1);
+                    activity_menu.getItem(0).setVisible(false);
                     return true;
                 case R.id.navigation_reserva:
-                    flipper.setDisplayedChild(1);
+                    flipper.setDisplayedChild(2);
                     activity_menu.getItem(0).setVisible(true);
                     return true;
             }
@@ -98,6 +109,11 @@ public class DetalhesAnuncio extends AppCompatActivity {
         localizacao = (TextView) findViewById(R.id.txt_localizacao);
         limite_quilometragem = (TextView) findViewById(R.id.txt_limite_quilometragem);
         descricao_publicacao = (TextView) findViewById(R.id.txt_descricao_publicacao);
+        iv_foto_locador = (ImageView) findViewById(R.id.iv_foto_locador);
+        txt_nome_locador = (TextView) findViewById(R.id.txt_nome_locador);
+        txt_localizacao_locador = (TextView) findViewById(R.id.txt_localizacao_locador);
+        lv_avaliacoes_locador = (ListView) findViewById(R.id.lv_avaliacoes);
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
 
         data_retirada = Calendar.getInstance();
         data_entrega = Calendar.getInstance();
@@ -131,6 +147,10 @@ public class DetalhesAnuncio extends AppCompatActivity {
         if( id_anuncio == -1 ) {
             startActivity( new Intent(context, MainActivity.class) );
             return;
+        }
+
+        if( !Login.is_logado(context) ) {
+            bottomNavigationView.getMenu().getItem(2).setEnabled(false);
         }
 
         new GetInfoAnuncio().execute();
@@ -340,7 +360,37 @@ public class DetalhesAnuncio extends AppCompatActivity {
             limite_quilometragem.setText( String.format(Locale.getDefault(), "%d", anuncio.getLimiteQuilometragem()) );
             descricao_publicacao.setText( anuncio.getDescricao() );
 
+            txt_nome_locador.setText( String.format(Locale.getDefault(), "%s %s", anuncio.getNomeLocador(), anuncio.getSobrenomeLocador()) );
+            txt_localizacao_locador.setText( String.format(Locale.getDefault(), "%s, %s", anuncio.getCidade(), anuncio.getEstado()) );
+
+            String url_foto = Server.servidor + "img/uploads/usuarios/" + anuncio.getFotoLocador();
+            Glide.with(context).load(url_foto).into(iv_foto_locador);
+
             new GetImagensAnuncio().execute();
+            new GetAvaliacoesLocador().execute();
+        }
+    }
+
+    private class GetAvaliacoesLocador extends AsyncTask<Void, Void, Avaliacao[]> {
+
+        @Override
+        protected Avaliacao[] doInBackground(Void... params) {
+            String url = Server.servidor + "apis/android/get_avaliacoes_usuario.php";
+            HashMap<String, String> parametros = new HashMap<>();
+            parametros.put("idUsuario", String.valueOf(anuncio.getIdLocador()));
+
+            String json = HttpRequest.post(url, parametros);
+            Log.d("JSONAVALIACOES", json);
+
+            return new Gson().fromJson(json, Avaliacao[].class);
+        }
+
+        @Override
+        protected void onPostExecute(Avaliacao[] avaliacoes) {
+            super.onPostExecute(avaliacoes);
+
+            AvaliacaoAdapter adapter = new AvaliacaoAdapter(context, R.layout.list_view_item_avaliacao, Arrays.asList( avaliacoes ));
+            lv_avaliacoes_locador.setAdapter( adapter );
         }
     }
 }
