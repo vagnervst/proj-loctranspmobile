@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
+import com.cityshare.app.model.Server;
 import com.cityshare.app.model.Usuario;
 import com.google.gson.Gson;
 
@@ -90,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
             parametros.put("email", email);
             parametros.put("senha", senha);
 
-            String url = getString( R.string.serverAddr ) + "apis/android/login.php";
+            String url = Server.servidor + "apis/android/login.php";
             String json = HttpRequest.post( url, parametros );
 
             Log.d( "DEBUG", json );

@@ -44,6 +44,7 @@ public class NotificacoesService extends Service {
             public void run() {
 
                 String url = Server.servidor + "apis/get_notificacoes_usuario.php";
+
                 try {
                     URLConnection conexao = new URL(url).openConnection();
                     conexao.setConnectTimeout(10000);

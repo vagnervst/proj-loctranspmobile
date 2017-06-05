@@ -25,7 +25,6 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        r
         <activity
             android:name=".DetalhesAnuncio"
             android:label="@string/title_activity_detalhes_anuncio"
@@ -164,7 +163,9 @@
         <activity
             android:name=".CadastroActivity"
             android:label="@string/title_activity_cadastro"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".MeusAnunciosActivity"
+            android:label="@string/title_activity_meus_anuncios"/>
     </application>
-
 </manifest>
