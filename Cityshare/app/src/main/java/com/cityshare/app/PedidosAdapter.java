@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cityshare.app.model.Pedido;
+import com.cityshare.app.model.Server;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -45,7 +46,7 @@ public class PedidosAdapter extends ArrayAdapter<Pedido> {
 
         ImageView foto_pedido = (ImageView) v.findViewById(R.id.img_veiculo);
 
-        String url = getContext().getString(R.string.serverAddr) + "img/uploads/publicacoes/" + pedido.getImagemPrincipal();
+        String url = Server.servidor + "img/uploads/publicacoes/" + pedido.getImagemPrincipal();
         Log.d("PATH", url);
         Picasso.with(getContext()).load( url ).into(foto_pedido);
 

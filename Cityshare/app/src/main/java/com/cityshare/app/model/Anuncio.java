@@ -9,6 +9,10 @@ public class Anuncio {
     private int quilometragemAtual;
     private int limiteQuilometragem;
     private int qtdPortas;
+    private int idLocador;
+    private String nomeLocador;
+    private String sobrenomeLocador;
+    private String fotoLocador;
     private String titulo;
     private String descricao;
     private String localizacao;
@@ -175,5 +179,37 @@ public class Anuncio {
 
     public void setImagemD(String imagemD) {
         this.imagemD = imagemD;
+    }
+
+    public int getIdLocador() {
+        return idLocador;
+    }
+
+    public void setIdLocador(int idLocador) {
+        this.idLocador = idLocador;
+    }
+
+    public String getNomeLocador() {
+        return nomeLocador;
+    }
+
+    public void setNomeLocador(String nomeLocador) {
+        this.nomeLocador = nomeLocador;
+    }
+
+    public String getSobrenomeLocador() {
+        return sobrenomeLocador;
+    }
+
+    public void setSobrenomeLocador(String sobrenomeLocador) {
+        this.sobrenomeLocador = sobrenomeLocador;
+    }
+
+    public String getFotoLocador() {
+        return fotoLocador;
+    }
+
+    public void setFotoLocador(String fotoLocador) {
+        this.fotoLocador = fotoLocador;
     }
 }

@@ -26,6 +26,7 @@ import com.cityshare.app.model.DoubleTypeAdapter;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Pedido;
+import com.cityshare.app.model.Server;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -56,6 +57,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
     Button confirmarLocal;
     Button cancelarLocacao;
     Button visualizarPendencias;
+    Button avaliarLocacao;
     ListView lv_historico_alteracao;
 
     int idPedido;
@@ -114,6 +116,14 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         visualizarPendencias = (Button) findViewById(R.id.btn_visualizar_pendencias);
 
         cancelarLocacao = (Button) findViewById(R.id.btn_cancelar_locacao);
+        avaliarLocacao = (Button) findViewById(R.id.btn_avaliar_locacao);
+
+        avaliarLocacao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirModalAvaliacao();
+            }
+        });
 
         lv_historico_alteracao = (ListView) findViewById(R.id.lv_historico_alteracoes);
 
@@ -135,7 +145,8 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
                 cod_status_aguardando_definicao_local_entrega = 4,
                 cod_status_aguardando_confirmacao_entrega = 5,
                 cod_status_agurdando_definicao_pendencias = 6,
-                cod_status_aguardando_confirmacao_pendencias = 7;
+                cod_status_aguardando_confirmacao_pendencias = 7,
+                cod_status_concluido = 9;
 
         final int NAO_DEFINIDO = 0, DEFINIDO = 1;
 
@@ -180,6 +191,18 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             visualizarPendencias.setVisibility( View.VISIBLE );
         }
 
+        if( pedido.getIdStatusPedido() == cod_status_concluido ) {
+
+            if( pedido.getIdUsuarioLocador() == Login.getId_usuario(context) && pedido.getLocatarioAvaliado() == 0 ) {
+                avaliarLocacao.setVisibility( View.VISIBLE );
+                avaliarLocacao.setText( "Avaliar Locatário" );
+            } else if( pedido.getIdUsuarioLocatario() == Login.getId_usuario(context) && pedido.getLocadorAvaliado() == 0 ) {
+                avaliarLocacao.setVisibility( View.VISIBLE );
+                avaliarLocacao.setText( "Avaliar Locador" );
+            }
+
+        }
+
         if( pedido.getIdStatusPedido() <= cod_status_aguardando_confirmacao_retirada ) {
             cancelarLocacao.setVisibility( View.VISIBLE );
         }
@@ -196,7 +219,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         Button btn_dinheiro = (Button) dialog_pagamento_pendencias.findViewById(R.id.btn_dinheiro);
         Button btn_cartao_credito = (Button) dialog_pagamento_pendencias.findViewById(R.id.btn_cartao_credito);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:dd", Locale.getDefault());
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
 
         try {
             Date data_entrega = formatter.parse( pedido.getDataEntrega() );
@@ -205,7 +228,12 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             long diff = data_entrega_efetuada.getTime() - data_entrega.getTime();
             int dias_atraso = (int) TimeUnit.MILLISECONDS.toDays( diff );
 
-            txt_dias_atraso.setText( String.format(Locale.getDefault(), "%d = %.2f", dias_atraso, dias_atraso * pedido.getValorDiaria()) );
+            if( dias_atraso < 0 ) {
+                dias_atraso = 0;
+            }
+
+            double valorTotalAtraso = dias_atraso * pedido.getValorDiaria();
+            txt_dias_atraso.setText( String.format(Locale.getDefault(), "%d dias = R$%.2f", dias_atraso, valorTotalAtraso) );
 
             double litros_restantes = pedido.getTanqueVeiculo() / pedido.getCombustivelRestante();
             double preco_combustivel = litros_restantes * pedido.getValorCombustivel();
@@ -215,8 +243,10 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             double valor_quilometragem_excedida = pedido.getQuilometragemExcedida() * pedido.getValorQuilometragem();
 
             txt_quilometragem_excedida.setText(
-                    String.format(Locale.getDefault(), "%dKm = %.2f", pedido.getQuilometragemExcedida(), valor_quilometragem_excedida)
+                    String.format(Locale.getDefault(), "%dKm = R$%.2f", pedido.getQuilometragemExcedida(), valor_quilometragem_excedida)
             );
+
+            final double valorTotalPendencias = valorTotalAtraso + preco_combustivel + valor_quilometragem_excedida;
 
             builder.setView( dialog_pagamento_pendencias );
 
@@ -225,7 +255,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             btn_dinheiro.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    abrirModalPagamentoDinheiro();
+                    abrirModalPagamentoDinheiro(valorTotalPendencias);
                     dialog.dismiss();
                 }
             });
@@ -233,7 +263,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             btn_cartao_credito.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    abrirModalPagamentoCartaoCredito();
+                    abrirModalPagamentoCartaoCredito(valorTotalPendencias);
                     dialog.dismiss();
                 }
             });
@@ -245,8 +275,11 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         }
     }
 
-    private void abrirModalPagamentoDinheiro() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Pagamento em Dinheiro").setMessage("R$XX,XX devem ser pagos à ~edt_nome do locador~").setPositiveButton("Confirmar Pagamento", new DialogInterface.OnClickListener() {
+    private void abrirModalPagamentoDinheiro( double valorTotalPendencias ) {
+
+        String mensagemModal = String.format(Locale.getDefault(), "R$%.2f devem ser pagos à %s", valorTotalPendencias, pedido.getNomeLocador() + " " + pedido.getSobrenomeLocador());
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Pagamento em Dinheiro").setMessage(mensagemModal).setPositiveButton("Confirmar Pagamento", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 new PagarPendencias( PagarPendencias.DINHEIRO, null ).execute();
@@ -263,8 +296,11 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void abrirModalPagamentoCartaoCredito() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Pagamento em Cartão de Crédito").setMessage("R$XX,XX serão descontados do cartão de crédito cadastrado em sua conta");
+    private void abrirModalPagamentoCartaoCredito( double valorTotalPendencias ) {
+
+        String mensagemModal = String.format(Locale.getDefault(), "R$%.2f serão descontados do cartão de crédito cadastrado em sua conta", valorTotalPendencias);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Pagamento em Cartão de Crédito").setMessage(mensagemModal);
         View view_pagamento_cartao = getLayoutInflater().inflate(R.layout.dialog_pagamento_cartao_credito, null);
         final EditText txt_codigo_seguranca = (EditText) view_pagamento_cartao.findViewById(R.id.txt_codigo_seguranca_cartao);
 
@@ -292,7 +328,12 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
     }
 
     private void abrirModalAvaliacao() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Avaliar Usuário").setMessage("Curtiu a negociação? Deixe uma avaliação para ~edt_nome do usuário~ :-)");
+
+        String nome_alvo_avaliacao = ( pedido.getIdUsuarioLocador() == Login.getId_usuario(context) )? pedido.getNomeLocatario() + " " + pedido.getSobrenomeLocatario() : pedido.getNomeLocador() + " " + pedido.getSobrenomeLocador();
+
+        String mensagem = String.format(Locale.getDefault(), "Curtiu a negociação? Deixe uma avaliação para %s :-)", nome_alvo_avaliacao);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Avaliar Usuário").setMessage(mensagem);
         View view_dialog_avaliacao = getLayoutInflater().inflate(R.layout.dialog_avaliar_usuario, null);
         builder.setView(view_dialog_avaliacao);
 
@@ -406,10 +447,10 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             try {
                 data_entrega = formatter.parse( pedido.getDataEntrega() );
 
-                txt_data_entrega.setText( formatter.format( data_entrega ) );
+                txt_data_entrega.setText( SimpleDateFormat.getDateTimeInstance().format( data_entrega ) );
 
                 Date data_atual = Calendar.getInstance().getTime();
-                txt_data_entrega_efetuada.setText( formatter.format( data_atual ) );
+                txt_data_entrega_efetuada.setText( SimpleDateFormat.getDateTimeInstance().format( data_atual ) );
 
                 long diff = data_atual.getTime() - data_entrega.getTime();
                 int dias_atraso = (int) TimeUnit.MILLISECONDS.toDays( diff );
@@ -578,7 +619,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/pedido_solicitacao.php";
+            String url = Server.servidor + "apis/pedido_solicitacao.php";
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idPedido", String.valueOf(idPedido));
             parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
@@ -613,7 +654,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/pedido_definir_pendencias.php";
+            String url = Server.servidor + "apis/pedido_definir_pendencias.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
@@ -669,7 +710,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/pedido_realizar_pagamento.php";
+            String url = Server.servidor + "apis/pedido_realizar_pagamento.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idPedido", String.valueOf(idPedido));
@@ -693,7 +734,9 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             if( resultado ) {
 
                 if( formaPagamento == DINHEIRO ) {
-                    AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Pagamento realizado").setMessage("Aguarde ~edt_nome do locador~ confirmar o pagamento").create();
+                    String mensagemModal = String.format(Locale.getDefault(), "Aguarde %s confirmar o pagamento", pedido.getNomeLocador() + " " + pedido.getSobrenomeLocador());
+
+                    AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Pagamento realizado").setMessage(mensagemModal).create();
                     dialog.show();
                 } else if( formaPagamento == CARTAO_CREDITO ) {
                     abrirModalAvaliacao();
@@ -725,7 +768,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/pedido_avaliacao.php";
+            String url = Server.servidor + "apis/pedido_avaliacao.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("notaAvaliacao", String.valueOf(notaAvaliacao));
@@ -745,8 +788,13 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             progress.dismiss();
 
             if( resultado ) {
-                AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Avaliação enviada").setMessage("~edt_nome do usuario~ agradece a sua avaliação!").create();
+                String nome_alvo_avaliacao = ( pedido.getIdUsuarioLocador() == Login.getId_usuario(context) )? pedido.getNomeLocatario() + " " + pedido.getSobrenomeLocatario() : pedido.getNomeLocador() + " " + pedido.getSobrenomeLocador();
+
+                String mensagemModal = String.format(Locale.getDefault(), "%s agradece a sua avaliação!", nome_alvo_avaliacao);
+                AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Avaliação enviada").setMessage(mensagemModal).create();
                 dialog.show();
+
+                avaliarLocacao.setVisibility( View.GONE );
             } else {
                 AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Houve um erro").setMessage("Houve um erro ao tentar enviar a avaliação").create();
                 dialog.show();

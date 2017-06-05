@@ -20,6 +20,7 @@
             android:layout_height="match_parent">
 
             <include layout="@layout/content_detalhes_anuncio_informacoes" />
+            <include layout="@layout/content_detalhes_anuncio_locador" />
             <include layout="@layout/content_detalhes_anuncio_reserva" />
 
         </ViewFlipper>

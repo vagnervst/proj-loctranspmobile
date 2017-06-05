@@ -32,8 +32,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cityshare.app.model.Anuncio;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
+import com.cityshare.app.model.Server;
 import com.cityshare.app.model.Usuario;
-import com.cityshare.app.services.NotificacoesListener;
 import com.cityshare.app.services.NotificacoesService;
 import com.google.gson.Gson;
 
@@ -62,11 +62,13 @@ public class MainActivity extends AppCompatActivity
 
         context = this;
 
+        if( Server.servidor.isEmpty() ) {
+            startActivity(new Intent(context, ConfiguracaoServidorActivity.class));
+            return;
+        }
+
         Intent notificacoesService = new Intent(context, NotificacoesService.class);
         startService( notificacoesService );
-
-        Intent listenerNotificacoes = new Intent(context, NotificacoesListener.class);
-        startService( listenerNotificacoes );
 
         lv_anuncios = (ListView) findViewById( R.id.lv_anuncios );
 
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity
             for( int i = 0; i < navigationView.getMenu().size(); ++i ) {
                 MenuItem item = navigationView.getMenu().getItem(i);
 
-                if( item.getItemId() != R.id.nav_entrar ) item.setEnabled(false);
+                if( item.getItemId() != R.id.nav_entrar && item.getItemId() != R.id.nav_cadastro ) item.setEnabled(false);
                 if( item.getItemId() == R.id.nav_sair ) item.setVisible(false);
             }
 
@@ -113,8 +115,8 @@ public class MainActivity extends AppCompatActivity
             for( int i = 0; i < navigationView.getMenu().size(); ++i ) {
                 MenuItem item = navigationView.getMenu().getItem(i);
 
-                if( item.getItemId() != R.id.nav_entrar ) item.setEnabled(true);
-                if( item.getItemId() == R.id.nav_entrar ) item.setVisible(false);
+                if( item.getItemId() != R.id.nav_entrar || item.getItemId() != R.id.nav_cadastro ) item.setEnabled(true);
+                if( item.getItemId() == R.id.nav_entrar || item.getItemId() == R.id.nav_cadastro ) item.setVisible(false);
             }
 
             new GetInfoUsuario().execute();
@@ -177,6 +179,9 @@ public class MainActivity extends AppCompatActivity
         if ( id == R.id.nav_entrar ) {
             Intent loginWin = new Intent( context, LoginActivity.class );
             startActivity( loginWin );
+        } else if( id == R.id.nav_cadastro ) {
+            Intent loginWin = new Intent( context, CadastroActivity.class );
+            startActivity( loginWin );
         } else if (id == R.id.nav_pedidos) {
             Intent pedidosWin = new Intent( context, PedidosActivity.class );
             startActivity( pedidosWin );
@@ -185,7 +190,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_solicitacoes) {
             startActivity( new Intent( context, SolicitacoesActivity.class ) );
         } else if (id == R.id.nav_notificacoes) {
-
+            startActivity( new Intent( context, NotificacoesActivity.class ) );
         } else if (id == R.id.nav_conta) {
             Intent configContaWin = new Intent( context, ConfiguracoesContaActivity.class );
             startActivity( configContaWin );
@@ -229,7 +234,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... params) {
-            String json = HttpRequest.get( getString(R.string.serverAddr) + "apis/android/lista_anuncios.php");
+            String json = HttpRequest.get( Server.servidor + "apis/android/lista_anuncios.php");
             Log.d("JSONANUNCIOS", json);
 
             anuncios = Arrays.asList( new Gson().fromJson(json, Anuncio[].class) );
@@ -291,7 +296,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... params) {
-            String url = getString(R.string.serverAddr) + "apis/android/get_info_usuario.php";
+            String url = Server.servidor + "apis/android/get_info_usuario.php";
 
             HashMap<String, String> parametros = new HashMap<>();
             parametros.put("idUsuario", String.valueOf(Login.getId_usuario(context)));
@@ -309,7 +314,7 @@ public class MainActivity extends AppCompatActivity
 
             if( usuario != null ) {
 
-                String url_foto = getString(R.string.serverAddr) + "img/uploads/usuarios/" + usuario.getFotoPerfil();
+                String url_foto = Server.servidor + "img/uploads/usuarios/" + usuario.getFotoPerfil();
                 new CarregarFotoUsuario(url_foto).execute();
 
                 txt_nome_usuario.setText( String.format(Locale.getDefault(), "%s %s", usuario.getNome(), usuario.getSobrenome()) );

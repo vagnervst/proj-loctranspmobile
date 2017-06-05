@@ -25,6 +25,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        r
         <activity
             android:name=".DetalhesAnuncio"
             android:label="@string/title_activity_detalhes_anuncio"
@@ -133,13 +134,6 @@
         <service
             android:name=".services.NotificacoesService"
             android:exported="false" />
-        <service
-            android:name=".services.NotificacoesListener"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
 
         <activity
             android:name=".SolicitacoesActivity"
@@ -157,6 +151,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cityshare.app.MainActivity" />
         </activity>
+        <activity android:name=".ConfiguracaoServidorActivity" />
+        <activity
+            android:name=".NotificacoesActivity"
+            android:label="@string/title_activity_notificacoes"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cityshare.app.MainActivity" />
+        </activity>
+        <activity
+            android:name=".CadastroActivity"
+            android:label="@string/title_activity_cadastro"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

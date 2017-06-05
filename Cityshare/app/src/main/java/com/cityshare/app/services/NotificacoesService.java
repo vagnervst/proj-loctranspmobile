@@ -5,10 +5,12 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.widget.Toast;
 
 import com.cityshare.app.MainActivity;
 import com.cityshare.app.PedidosActivity;
@@ -16,8 +18,11 @@ import com.cityshare.app.R;
 import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Notificacao;
+import com.cityshare.app.model.Server;
 import com.google.gson.Gson;
 
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Timer;
@@ -38,54 +43,85 @@ public class NotificacoesService extends Service {
             @Override
             public void run() {
 
-                String url = getString(R.string.serverAddr) + "apis/get_notificacoes_usuario.php";
-                HashMap<String, String> parametros = new HashMap<String, String>();
-                int id_usuario = Login.getId_usuario(getApplicationContext());
+                String url = Server.servidor + "apis/get_notificacoes_usuario.php";
+                try {
+                    URLConnection conexao = new URL(url).openConnection();
+                    conexao.setConnectTimeout(10000);
+                    conexao.connect();
 
-                parametros.put("where", "n.idUsuarioDestinatario = " + id_usuario + " AND n.visualizada = 0");
+                    HashMap<String, String> parametros = new HashMap<String, String>();
+                    int id_usuario = Login.getId_usuario(getApplicationContext());
 
-                String json = HttpRequest.post(url, parametros);
+                    parametros.put("where", "n.idUsuarioDestinatario = " + id_usuario + " AND n.visualizada = 0");
 
-                Notificacao[] listaNotificacoes = new Gson().fromJson(json, Notificacao[].class);
+                    String json = HttpRequest.post(url, parametros);
 
-                for( int i = 0; i < listaNotificacoes.length; ++i ) {
-                    Notificacao notificacao = listaNotificacoes[i];
+                    Notificacao[] listaNotificacoes = new Gson().fromJson(json, Notificacao[].class);
 
-                    if( notificacao.getVisualizada() == 0 ) {
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext()).
-                                setSmallIcon( R.mipmap.ic_launcher ).
-                                setContentTitle( notificacao.getTipoNotificacao() );
+                    for( int i = 0; i < listaNotificacoes.length; ++i ) {
+                        Notificacao notificacao = listaNotificacoes[i];
 
-                        int tipoNotificacao = notificacao.getIdTipoNotificacao();
-                        if( tipoNotificacao == Notificacao.SOLICITACAO ) {
-                            builder.setContentText( String.format(Locale.getDefault(), "Há uma nova solicitação de %s %s", notificacao.getNomeRemetente(), notificacao.getSobrenomeRemetente().charAt(0)) );
-                        } else if( tipoNotificacao == Notificacao.ATUALIZACAO_PEDIDO ) {
-                            builder.setContentText( "Há uma nova atualização de pedido" );
-                        } else if( tipoNotificacao == Notificacao.AVALIACAO ) {
-                            builder.setContentText( String.format(Locale.getDefault(), "%s avaliou você!", notificacao.getNomeRemetente() + notificacao.getSobrenomeRemetente().charAt(0)) );
+                        if( notificacao.getVisualizada() == 0 ) {
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext()).
+                                    setSmallIcon( R.mipmap.ic_launcher ).
+                                    setContentTitle( notificacao.getTipoNotificacao() );
+
+                            int tipoNotificacao = notificacao.getIdTipoNotificacao();
+                            if( tipoNotificacao == Notificacao.SOLICITACAO ) {
+                                builder.setContentText( String.format(Locale.getDefault(), "Há uma nova solicitação de %s %s", notificacao.getNomeRemetente(), notificacao.getSobrenomeRemetente().charAt(0)) );
+                            } else if( tipoNotificacao == Notificacao.ATUALIZACAO_PEDIDO ) {
+                                builder.setContentText( "Há uma nova atualização de pedido" );
+                            } else if( tipoNotificacao == Notificacao.AVALIACAO ) {
+                                builder.setContentText( String.format(Locale.getDefault(), "%s avaliou você!", notificacao.getNomeRemetente() + notificacao.getSobrenomeRemetente().charAt(0)) );
+                            }
+
+                            Intent intent = new Intent( getApplicationContext(), MainActivity.class );
+                            TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
+
+                            stackBuilder.addParentStack( MainActivity.class );
+
+                            stackBuilder.addNextIntent( intent );
+
+                            Intent pedidosWin = new Intent( getApplicationContext(), PedidosActivity.class );
+                            pedidosWin.putExtra("idNotificacao", notificacao.getId());
+
+                            PendingIntent pendingIntent = PendingIntent.getActivity( getApplicationContext(), 0, pedidosWin, 0);
+
+                            builder.setContentIntent( pendingIntent );
+
+                            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            manager.notify( i, builder.build());
+
+                            new LerNotificacao( notificacao.getId() ).execute();
                         }
-
-                        Intent intent = new Intent( getApplicationContext(), MainActivity.class );
-                        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
-
-                        stackBuilder.addParentStack( MainActivity.class );
-
-                        stackBuilder.addNextIntent( intent );
-
-                        Intent pedidosWin = new Intent( getApplicationContext(), PedidosActivity.class );
-                        pedidosWin.putExtra("idNotificacao", notificacao.getId());
-
-                        PendingIntent pendingIntent = PendingIntent.getActivity( getApplicationContext(), 0, pedidosWin, 0);
-
-                        builder.setContentIntent( pendingIntent );
-
-                        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                        manager.notify( i, builder.build());
                     }
+
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Impossível se conectar ao servidor", Toast.LENGTH_SHORT).show();
                 }
+
             }
-        }, 0, 5000);
+        }, 0, 1000 * 10);
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private class LerNotificacao extends AsyncTask<Void, Void, Void> {
+        int idNotificacao;
+
+        private LerNotificacao(int idNotificacao) {
+            this.idNotificacao = idNotificacao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String url = Server.servidor + "apis/android/set_notificacao.php";
+            HashMap<String, String> parametros = new HashMap<>();
+            parametros.put("idNotificacao", String.valueOf(this.idNotificacao));
+
+            HttpRequest.post(url, parametros);
+
+            return null;
+        }
     }
 }
