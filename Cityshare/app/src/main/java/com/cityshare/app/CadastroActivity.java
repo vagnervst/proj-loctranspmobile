@@ -1,6 +1,7 @@
 package com.cityshare.app;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,10 +9,14 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,25 +33,31 @@ import android.widget.ViewFlipper;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.Target;
 import com.cityshare.app.model.Banco;
 import com.cityshare.app.model.Cidade;
 import com.cityshare.app.model.Estado;
 import com.cityshare.app.model.HttpRequest;
+import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Server;
 import com.cityshare.app.model.TipoCartaoCredito;
 import com.google.gson.Gson;
+import com.kofigyan.stateprogressbar.StateProgressBar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class CadastroActivity extends AppCompatActivity {
 
     ViewFlipper viewFlipper;
+    StateProgressBar stateProgressBar;
     ImageButton ib_foto;
     EditText txt_nome, txt_sobrenome, txt_data_nascimento, txt_rg, txt_cpf, txt_telefone, txt_celular, txt_email, txt_numero_cartao, txt_validade_cartao,
             txt_numero_agencia, txt_numero_conta, txt_digito_verificador, txt_numero_cnh, txt_email_autenticacao, txt_senha, txt_confirmar_senha;
@@ -60,8 +71,10 @@ public class CadastroActivity extends AppCompatActivity {
     Context context;
 
     int modoAtual = INFO_PESSOAIS;
-    Bitmap nova_foto;
+    Uri nova_foto;
+    List<String> progressoCadastro;
 
+    boolean cadastro_somente_para_anuncio = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +85,7 @@ public class CadastroActivity extends AppCompatActivity {
         context = this;
 
         viewFlipper = (ViewFlipper) findViewById(R.id.vf_flipper);
+        stateProgressBar = (StateProgressBar) findViewById(R.id.stateProgressBar);
         ib_foto = (ImageButton) findViewById(R.id.ib_foto);
         txt_nome = (EditText) findViewById(R.id.txt_nome);
         txt_sobrenome = (EditText) findViewById(R.id.txt_sobrenome);
@@ -97,6 +111,18 @@ public class CadastroActivity extends AppCompatActivity {
         txt_email_autenticacao = (EditText) findViewById(R.id.txt_email_autenticacao);
         txt_senha = (EditText) findViewById(R.id.txt_senha);
         txt_confirmar_senha = (EditText) findViewById(R.id.txt_confirmar_senha);
+
+        progressoCadastro = new ArrayList<>();
+        progressoCadastro.add("Pessoal");
+        progressoCadastro.add("Contato");
+        progressoCadastro.add("Financeiro");
+        progressoCadastro.add("Condução");
+        progressoCadastro.add("Autenticação");
+
+        String[] arrayProgresso = new String[ progressoCadastro.size() ];
+        arrayProgresso = progressoCadastro.toArray( arrayProgresso );
+
+        stateProgressBar.setStateDescriptionData( arrayProgresso );
 
         txt_nome.addTextChangedListener( new KeyListener() );
         txt_sobrenome.addTextChangedListener( new KeyListener() );
@@ -178,13 +204,147 @@ public class CadastroActivity extends AppCompatActivity {
 
         menu_cadastro = menu;
         menu_cadastro.getItem(0).setEnabled(false);
+        menu_cadastro.getItem(0).setIcon( R.mipmap.ic_done_gray );
 
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if( requestCode == GET_IMAGE && resultCode == RESULT_OK ) {
+            nova_foto = data.getData();
+            new CarregarFoto().execute();
+        }
+
+    }
+
+    private void prepararDadosParaApi() {
+        final HashMap<String, String> parametros = new HashMap<>();
+
+        if( nova_foto != null ) {
+
+            new AsyncTask<Void, Void, String>() {
+
+                @Override
+                protected String doInBackground(Void... params) {
+                    String bytes_imagem = null;
+                    try {
+                        bytes_imagem = Base64.encodeToString( Glide.with(context).load(nova_foto).asBitmap().toBytes(Bitmap.CompressFormat.JPEG, 50 ).into( Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL ).get(), Base64.DEFAULT );
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    return bytes_imagem;
+                }
+
+                @Override
+                protected void onPostExecute(String bytes_imagem) {
+                    super.onPostExecute(bytes_imagem);
+
+                    if( bytes_imagem != null ) {
+                        parametros.put("fotoPerfil", bytes_imagem);
+                    }
+
+                    if( !txt_nome.getText().toString().trim().isEmpty() ) {
+                        parametros.put("nome", txt_nome.getText().toString().trim());
+                    }
+
+                    if( !txt_sobrenome.getText().toString().trim().isEmpty() ) {
+                        parametros.put("sobrenome", txt_sobrenome.getText().toString().trim());
+                    }
+
+                    if( !txt_data_nascimento.getText().toString().trim().isEmpty() ) {
+                        try {
+                            Date data_nascimento = SimpleDateFormat.getDateInstance().parse( txt_data_nascimento.getText().toString().trim() );
+                            parametros.put("dataNascimento", String.valueOf(data_nascimento.getTime()/1000));
+                        } catch (ParseException e) {
+                            return;
+                        }
+                    }
+
+                    if( !txt_rg.getText().toString().trim().isEmpty() ) {
+                        parametros.put("rg", txt_rg.getText().toString().trim());
+                    }
+
+                    if( !txt_cpf.getText().toString().trim().isEmpty() ) {
+                        parametros.put("cpf", txt_cpf.getText().toString().trim());
+                    }
+
+                    if( !txt_telefone.getText().toString().trim().isEmpty() ) {
+                        parametros.put("telefone", txt_telefone.getText().toString().trim());
+                    }
+
+                    if( !txt_celular.getText().toString().trim().isEmpty() ) {
+                        parametros.put("celular", txt_celular.getText().toString().trim());
+                    }
+
+                    if( !txt_email.getText().toString().trim().isEmpty() ) {
+                        parametros.put("emailContato", txt_email.getText().toString().trim());
+                    }
+
+                    if( !txt_numero_cnh.getText().toString().trim().isEmpty() ) {
+                        parametros.put("numeroCnh", txt_numero_cnh.getText().toString().trim());
+                    }
+
+                    if( !txt_email_autenticacao.getText().toString().trim().isEmpty() ) {
+                        parametros.put("emailAutenticacao", txt_email_autenticacao.getText().toString().trim());
+                    }
+
+                    if( !txt_senha.getText().toString().trim().isEmpty() && !txt_confirmar_senha.getText().toString().trim().isEmpty() ) {
+                        if( txt_senha.getText().toString().equals( txt_confirmar_senha.getText().toString() ) ) {
+                            parametros.put("senha", txt_senha.getText().toString().trim());
+                        }
+                    }
+
+                    String sexo = ( rg_sexo.getCheckedRadioButtonId() == R.id.rb_feminino )? "f" : "m";
+                    parametros.put("sexo", sexo);
+
+                    if( sp_cidade.getSelectedItem() != null ) {
+                        int id_cidade_selecionada = ((Cidade) sp_cidade.getSelectedItem()).getId();
+                        parametros.put("idCidade", String.valueOf(id_cidade_selecionada));
+                    }
+
+                    if( sp_tipo_cartao.getSelectedItem() != null &&
+                            !txt_numero_cartao.getText().toString().trim().isEmpty() &&
+                            !txt_validade_cartao.getText().toString().trim().isEmpty() )
+                    {
+                        try {
+
+                            int id_tipo_cartao = ((TipoCartaoCredito) sp_tipo_cartao.getSelectedItem()).getId();
+                            parametros.put("idTipoCartao", String.valueOf(id_tipo_cartao));
+                            parametros.put("numeroCartao", txt_numero_cartao.getText().toString().trim());
+                            Date data_vencimento_cartao = SimpleDateFormat.getDateInstance().parse( txt_validade_cartao.getText().toString().trim() );
+                            parametros.put("validadeCartao", String.valueOf(data_vencimento_cartao.getTime()/1000));
+
+                        } catch (ParseException e) {
+                            return;
+                        }
+                    }
+
+                    if( sp_banco.getSelectedItem() != null &&
+                            !txt_numero_agencia.getText().toString().trim().isEmpty() &&
+                            !txt_numero_conta.getText().toString().trim().isEmpty() &&
+                            !txt_digito_verificador.toString().trim().isEmpty() )
+                    {
+                        int id_banco = ((Banco) sp_banco.getSelectedItem()).getId();
+                        parametros.put("idBanco", String.valueOf(id_banco));
+                        parametros.put("numeroAgencia", txt_numero_agencia.getText().toString().trim());
+                        parametros.put("numeroConta", txt_numero_conta.getText().toString().trim());
+                        parametros.put("digitoVerificador", txt_digito_verificador.getText().toString().trim());
+                    }
+
+                    new EnviarDadosParaApi( parametros ).execute();
+                }
+            }.execute();
+        }
+    }
+
     private void toggleBotaoContinuar() {
         menu_cadastro.getItem(0).setEnabled(false);
-        menu_cadastro.getItem(0).setVisible(false);
+        menu_cadastro.getItem(0).setIcon( R.mipmap.ic_done_gray );
         btn_vou_alugar.setEnabled(false);
         btn_vou_emprestar.setEnabled(false);
 
@@ -197,7 +357,7 @@ public class CadastroActivity extends AppCompatActivity {
                     !txt_rg.getText().toString().trim().isEmpty() &&
                     !txt_cpf.getText().toString().trim().isEmpty() )
             {
-                menu_cadastro.getItem(0).setVisible(true);
+                menu_cadastro.getItem(0).setIcon( R.mipmap.ic_done_white );
                 menu_cadastro.getItem(0).setEnabled(true);
 
                 menu_cadastro.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -205,13 +365,14 @@ public class CadastroActivity extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem item) {
                         viewFlipper.setDisplayedChild(1);
                         modoAtual = INFO_CONTATO;
-                        menu_cadastro.getItem(0).setVisible(false);
                         toggleBotaoContinuar();
                         return true;
                     }
                 });
             }
         } else if( modoAtual == INFO_CONTATO ) {
+            stateProgressBar.checkStateCompleted(true);
+            stateProgressBar.setCurrentStateNumber( StateProgressBar.StateNumber.TWO );
 
             if( !txt_telefone.getText().toString().trim().isEmpty() &&
                     !txt_celular.getText().toString().trim().isEmpty() &&
@@ -241,11 +402,13 @@ public class CadastroActivity extends AppCompatActivity {
                 });
             }
         } else if( modoAtual == INFO_CARTAO_CREDITO ) {
+            stateProgressBar.checkStateCompleted(true);
+            stateProgressBar.setCurrentStateNumber( StateProgressBar.StateNumber.THREE );
 
             if( !txt_numero_cartao.getText().toString().trim().isEmpty() &&
                     !txt_validade_cartao.getText().toString().trim().isEmpty() )
             {
-                menu_cadastro.getItem(0).setVisible(true);
+                menu_cadastro.getItem(0).setIcon( R.mipmap.ic_done_white );
                 menu_cadastro.getItem(0).setEnabled(true);
 
                 menu_cadastro.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -260,12 +423,15 @@ public class CadastroActivity extends AppCompatActivity {
             }
 
         } else if( modoAtual == INFO_CONTA_BANCARIA ) {
+            stateProgressBar.checkStateCompleted(true);
+            stateProgressBar.setCurrentStateNumber( StateProgressBar.StateNumber.THREE );
 
             if( !txt_numero_conta.getText().toString().trim().isEmpty() &&
                     !txt_numero_agencia.getText().toString().trim().isEmpty() &&
                     !txt_digito_verificador.getText().toString().trim().isEmpty() )
             {
-                menu_cadastro.getItem(0).setVisible(true);
+                cadastro_somente_para_anuncio = true;
+                menu_cadastro.getItem(0).setIcon( R.mipmap.ic_done_white );
                 menu_cadastro.getItem(0).setEnabled(true);
 
                 menu_cadastro.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -281,8 +447,11 @@ public class CadastroActivity extends AppCompatActivity {
 
         } else if( modoAtual == INFO_CNH ) {
 
+            stateProgressBar.checkStateCompleted(true);
+            stateProgressBar.setCurrentStateNumber( StateProgressBar.StateNumber.FOUR );
+
             if( !txt_numero_cnh.getText().toString().trim().isEmpty() ) {
-                menu_cadastro.getItem(0).setVisible(true);
+                menu_cadastro.getItem(0).setIcon( R.mipmap.ic_done_white );
                 menu_cadastro.getItem(0).setEnabled(true);
 
                 menu_cadastro.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -298,32 +467,36 @@ public class CadastroActivity extends AppCompatActivity {
 
         } else if( modoAtual == INFO_AUTENTICACAO ) {
 
+            stateProgressBar.checkStateCompleted(true);
+
+            if( cadastro_somente_para_anuncio ) {
+
+                progressoCadastro.remove( progressoCadastro.indexOf("Condução") );
+                String[] arrayProgresso = new String[ progressoCadastro.size() ];
+                arrayProgresso = progressoCadastro.toArray( arrayProgresso );
+
+                stateProgressBar.setStateDescriptionData( arrayProgresso );
+                stateProgressBar.setMaxStateNumber( StateProgressBar.StateNumber.FOUR );
+                stateProgressBar.setCurrentStateNumber( StateProgressBar.StateNumber.FOUR );
+            } else {
+                stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.FIVE);
+            }
+
             if( !txt_email_autenticacao.getText().toString().trim().isEmpty() &&
                     !txt_senha.getText().toString().trim().isEmpty() &&
                     !txt_confirmar_senha.getText().toString().trim().isEmpty() )
             {
-                menu_cadastro.getItem(0).setVisible(true);
+                menu_cadastro.getItem(0).setIcon( R.mipmap.ic_done_white );
                 menu_cadastro.getItem(0).setEnabled(true);
 
                 menu_cadastro.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-
+                        prepararDadosParaApi();
                         return true;
                     }
                 });
             }
-        }
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if( requestCode == GET_IMAGE && resultCode == RESULT_OK ) {
-            Uri foto_selecionada = data.getData();
-            new CarregarFoto(foto_selecionada).execute();
         }
 
     }
@@ -503,18 +676,24 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     private class CarregarFoto extends AsyncTask<Void, Void, Void> {
-        private Uri uri;
+        private Bitmap foto_selecionada;
+        ProgressDialog progresso;
+        private int width, height;
 
-        private CarregarFoto(Uri uri) {
-            this.uri = uri;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progresso = ProgressDialog.show(context, "Carregando Foto", "Aguarde");
+            width = ib_foto.getWidth();
+            height = ib_foto.getHeight();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                byte[] bytes = Glide.with(context).load(this.uri).asBitmap().toBytes(Bitmap.CompressFormat.JPEG, 100).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(200, 200).get();
+                byte[] bytes = Glide.with(context).load(nova_foto).asBitmap().toBytes(Bitmap.CompressFormat.JPEG, 30).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into( width, height ).get();
 
-                nova_foto = BitmapFactory.decodeByteArray( bytes, 0, bytes.length );
+                this.foto_selecionada = BitmapFactory.decodeByteArray( bytes, 0, bytes.length );
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -526,8 +705,50 @@ public class CadastroActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            ib_foto.setImageBitmap( nova_foto );
+            progresso.dismiss();
+
+            RoundedBitmapDrawable round = RoundedBitmapDrawableFactory.create(null, this.foto_selecionada);
+            round.setCircular(true);
+
+            ib_foto.setImageDrawable( round );
             toggleBotaoContinuar();
+        }
+    }
+
+    private class EnviarDadosParaApi extends AsyncTask<Void, Void, Integer> {
+        ProgressDialog progress;
+        HashMap<String, String> parametros;
+
+        private EnviarDadosParaApi( HashMap<String, String> params ) {
+            this.parametros = params;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(context, "Carregando", "Aguarde");
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            String url = Server.servidor + "apis/android/cadastro_conta.php";
+
+            String json = HttpRequest.post(url, this.parametros);
+            Log.d("JSONCADASTRO", json);
+            //Integer resultado = new Gson().fromJson(json, Integer.class);
+
+            return -1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer idUsuarioInserido) {
+            progress.dismiss();
+
+            if( idUsuarioInserido != -1 ) {
+                Login.LoginUsuario(context, idUsuarioInserido);
+                startActivity( new Intent( context, MainActivity.class ) );
+                return;
+            }
         }
     }
 }
