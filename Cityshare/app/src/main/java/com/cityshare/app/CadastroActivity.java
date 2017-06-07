@@ -74,6 +74,7 @@ public class CadastroActivity extends AppCompatActivity {
     Uri nova_foto;
     List<String> progressoCadastro;
 
+    ProgressDialog progresso_conclusao_cadastro;
     boolean cadastro_somente_para_anuncio = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,6 +227,10 @@ public class CadastroActivity extends AppCompatActivity {
         if( nova_foto != null ) {
 
             new AsyncTask<Void, Void, String>() {
+                @Override
+                protected void onPreExecute() {
+                    progresso_conclusao_cadastro = ProgressDialog.show(context, "Carregando", "Aguarde");
+                }
 
                 @Override
                 protected String doInBackground(Void... params) {
@@ -716,17 +721,10 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     private class EnviarDadosParaApi extends AsyncTask<Void, Void, Integer> {
-        ProgressDialog progress;
         HashMap<String, String> parametros;
 
         private EnviarDadosParaApi( HashMap<String, String> params ) {
             this.parametros = params;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progress = ProgressDialog.show(context, "Carregando", "Aguarde");
         }
 
         @Override
@@ -735,19 +733,17 @@ public class CadastroActivity extends AppCompatActivity {
 
             String json = HttpRequest.post(url, this.parametros);
             Log.d("JSONCADASTRO", json);
-            //Integer resultado = new Gson().fromJson(json, Integer.class);
 
-            return -1;
+            return new Gson().fromJson(json, Integer.class);
         }
 
         @Override
         protected void onPostExecute(Integer idUsuarioInserido) {
-            progress.dismiss();
+            progresso_conclusao_cadastro.dismiss();
 
             if( idUsuarioInserido != -1 ) {
                 Login.LoginUsuario(context, idUsuarioInserido);
                 startActivity( new Intent( context, MainActivity.class ) );
-                return;
             }
         }
     }

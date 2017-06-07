@@ -350,14 +350,14 @@ public class DetalhesAnuncio extends AppCompatActivity {
             progress.dismiss();
 
             titulo_anuncio.setText( anuncio.getTitulo() );
-            valor_diaria.setText( String.format(Locale.getDefault(), "%.2f", anuncio.getValorDiaria()) );
-            valor_diaria_reserva.setText( String.format(Locale.getDefault(), "%.2f", anuncio.getValorDiaria()) );
-            valor_combustivel.setText( String.format(Locale.getDefault(), "%.2f", anuncio.getValorCombustivel()) );
-            valor_quilometragem.setText( String.format(Locale.getDefault(), "%.2f", anuncio.getValorDiaria()) );
+            valor_diaria.setText( String.format(Locale.getDefault(), "R$%.2f", anuncio.getValorDiaria()) );
+            valor_diaria_reserva.setText( String.format(Locale.getDefault(), "R$%.2f", anuncio.getValorDiaria()) );
+            valor_combustivel.setText( String.format(Locale.getDefault(), "R$%.2f", anuncio.getValorCombustivel()) );
+            valor_quilometragem.setText( String.format(Locale.getDefault(), "R$%.2f", anuncio.getValorDiaria()) );
             qtd_portas.setText( String.format(Locale.getDefault(), "%d", anuncio.getQtdPortas()) );
             tipo_combustivel.setText( anuncio.getCombustivel() );
             localizacao.setText( anuncio.getCidade() + ", " + anuncio.getEstado() );
-            limite_quilometragem.setText( String.format(Locale.getDefault(), "%d", anuncio.getLimiteQuilometragem()) );
+            limite_quilometragem.setText( String.format(Locale.getDefault(), "%dKm", anuncio.getLimiteQuilometragem()) );
             descricao_publicacao.setText( anuncio.getDescricao() );
 
             txt_nome_locador.setText( String.format(Locale.getDefault(), "%s %s", anuncio.getNomeLocador(), anuncio.getSobrenomeLocador()) );
@@ -380,7 +380,6 @@ public class DetalhesAnuncio extends AppCompatActivity {
             parametros.put("idUsuario", String.valueOf(anuncio.getIdLocador()));
 
             String json = HttpRequest.post(url, parametros);
-            Log.d("JSONAVALIACOES", json);
 
             return new Gson().fromJson(json, Avaliacao[].class);
         }

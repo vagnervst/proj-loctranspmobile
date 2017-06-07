@@ -19,13 +19,22 @@
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:textSize="20sp"
                 android:textAlignment="center"
                 android:text="Titulo do anúncio" />
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/vp_imagens_anuncio"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="250dp"/>
+                android:layout_height="250dp"
+                android:layout_marginBottom="@dimen/fab_margin"
+                android:background="@drawable/border_bottom">
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/vp_imagens_anuncio"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"/>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -136,8 +145,8 @@
                         <TextView
                             android:id="@+id/txt_qtd_portas"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="4"/>
+                            android:textStyle="italic"
+                            android:layout_height="wrap_content"/>
 
                     </LinearLayout>
 
@@ -155,7 +164,7 @@
                             android:id="@+id/txt_tipo_combustivel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="XXXX"/>
+                            android:textStyle="italic"/>
 
                     </LinearLayout>
 
@@ -181,7 +190,7 @@
                             android:id="@+id/txt_localizacao"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="XXXX"/>
+                            android:textStyle="italic"/>
 
                     </LinearLayout>
 
@@ -199,7 +208,7 @@
                             android:id="@+id/txt_limite_quilometragem"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="XXXX"/>
+                            android:textStyle="italic"/>
 
                     </LinearLayout>
 
@@ -212,8 +221,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="italic"
-                android:textSize="12sp"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a laoreet mi. Maecenas at est tempor, aliquet lacus in, efficitur lectus. Donec consequat erat vitae elit congue interdum. Duis faucibus, augue et efficitur ullamcorper, quam lacus sodales turpis, in venenatis justo nisl quis massa. Ut sed efficitur quam. Vestibulum efficitur, ex quis molestie malesuada, neque nulla dapibus ligula, sed dapibus sem metus sit amet dolor. Aenean at accumsan est. Aliquam sed tempus libero. Vivamus tincidunt elit et mi semper, eu accumsan est consectetur. Sed metus tellus, dictum ac pretium eu, fermentum in sapien. Nulla pharetra, libero sit amet mollis tincidunt, neque nunc semper neque, ut varius dui nunc sit amet ligula. Pellentesque pharetra finibus augue eget vestibulum. Donec vitae pharetra magna, sit amet sollicitudin magna. Vivamus et risus pulvinar, imperdiet neque in, imperdiet augue. Etiam non augue eu tortor sollicitudin aliquam."/>
+                android:textSize="12sp" />
 
     </LinearLayout>
 

@@ -15,7 +15,8 @@ public class Anuncio {
     private String fotoLocador;
     private String titulo;
     private String descricao;
-    private String localizacao;
+    private String localizacaoUsuario;
+    private String localizacaoAgencia;
     private String imagemPrincipal;
     private String imagemA;
     private String imagemB;
@@ -61,12 +62,12 @@ public class Anuncio {
         this.titulo = titulo;
     }
 
-    public String getLocalizacao() {
-        return localizacao;
+    public String getLocalizacaoUsuario() {
+        return localizacaoUsuario;
     }
 
-    public void setLocalizacao(String localizacao) {
-        this.localizacao = localizacao;
+    public void setLocalizacaoUsuario(String localizacaoUsuario) {
+        this.localizacaoUsuario = localizacaoUsuario;
     }
 
     public String getImagemPrincipal() {
@@ -211,5 +212,13 @@ public class Anuncio {
 
     public void setFotoLocador(String fotoLocador) {
         this.fotoLocador = fotoLocador;
+    }
+
+    public String getLocalizacaoAgencia() {
+        return localizacaoAgencia;
+    }
+
+    public void setLocalizacaoAgencia(String localizacaoAgencia) {
+        this.localizacaoAgencia = localizacaoAgencia;
     }
 }
