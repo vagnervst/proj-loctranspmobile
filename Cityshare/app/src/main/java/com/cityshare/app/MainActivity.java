@@ -16,7 +16,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -240,7 +239,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params) {
             String json = HttpRequest.get( Server.servidor + "apis/android/lista_anuncios.php");
-            Log.d("JSONANUNCIOS", json);
 
             anuncios = Arrays.asList( new Gson().fromJson(json, Anuncio[].class) );
 
@@ -324,6 +322,9 @@ public class MainActivity extends AppCompatActivity
 
                 txt_nome_usuario.setText( String.format(Locale.getDefault(), "%s %s", usuario.getNome(), usuario.getSobrenome()) );
                 txt_saldo_usuario.setText( String.format(Locale.getDefault(), "R$%.2f", usuario.getSaldo()) );
+
+                txt_nome_usuario.setVisibility( View.VISIBLE );
+                txt_saldo_usuario.setVisibility( View.VISIBLE );
             }
         }
     }

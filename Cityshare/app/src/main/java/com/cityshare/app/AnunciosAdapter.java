@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by vagne_000 on 07/05/2017.
@@ -45,13 +46,29 @@ public class AnunciosAdapter extends ArrayAdapter<Anuncio> {
 
         Anuncio anuncio = getItem(position);
 
+        TextView quilometragem = (TextView) v.findViewById(R.id.txt_quilometragem);
         ImageView img_veiculo = (ImageView) v.findViewById(R.id.img_veiculo);
+        TextView titulo_anuncio = (TextView) v.findViewById(R.id.txt_titulo_anuncio);
+        TextView valor_diaria = (TextView) v.findViewById(R.id.txt_valor_diaria);
+        TextView qtd_portas = (TextView) v.findViewById( R.id.txt_qtd_portas );
+        TextView localizacao = (TextView) v.findViewById( R.id.txt_localizacao );
+
+        quilometragem.setText( String.format(Locale.getDefault(), "%dKm rodados", anuncio.getQuilometragemAtual()) );
+
         String url = Server.servidor + "/img/uploads/publicacoes/" + anuncio.getImagemPrincipal();
         new GetImagem(url, img_veiculo).execute();
 
-        TextView titulo_anuncio = (TextView) v.findViewById(R.id.txt_titulo_anuncio);
-
         titulo_anuncio.setText( anuncio.getTitulo() );
+        valor_diaria.setText( String.format(Locale.getDefault(), "R$%.2f", anuncio.getValorDiaria()) );
+
+        if( anuncio.getQtdPortas() > 0 ) {
+            qtd_portas.setText(String.format(Locale.getDefault(), "Quantidade de Portas: %d", anuncio.getQtdPortas()));
+        } else {
+            qtd_portas.setVisibility( View.INVISIBLE );
+        }
+
+        String localizacao_anuncio = ( anuncio.getLocalizacaoAgencia() != null )? anuncio.getLocalizacaoAgencia() :  anuncio.getLocalizacaoUsuario();
+        localizacao.setText( localizacao_anuncio );
 
         return v;
     }

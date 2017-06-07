@@ -17,11 +17,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:paddingLeft="5dp"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/txt_quilometragem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="textEnd"
@@ -34,11 +35,14 @@
             android:text="Titulo do Veículo" />
 
         <TextView
+            android:id="@+id/txt_valor_diaria"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="20sp"
             android:text="R$XX,XX" />
 
         <TextView
+            android:id="@+id/txt_qtd_portas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Quantidade de portas: X" />
@@ -46,7 +50,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -54,39 +59,39 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@mipmap/ic_blue_star" />
 
                 <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@mipmap/ic_blue_star" />
 
                 <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@mipmap/ic_blue_star" />
 
                 <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@mipmap/ic_blue_star" />
 
                 <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@mipmap/ic_blue_star_outline" />
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="textEnd"
-                android:text="Localização" />
-
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/txt_localizacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textEnd" />
 
     </LinearLayout>
 
