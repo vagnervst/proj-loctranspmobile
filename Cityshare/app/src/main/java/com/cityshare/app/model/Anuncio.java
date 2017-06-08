@@ -5,11 +5,14 @@ package com.cityshare.app.model;
  */
 
 public class Anuncio {
+    public static final int DISPONIVEL = 1, INDISPONIVEL = 2;
+
     private int id;
     private int quilometragemAtual;
     private int limiteQuilometragem;
     private int qtdPortas;
     private int idLocador;
+    private int idStatusPublicacao;
     private String nomeLocador;
     private String sobrenomeLocador;
     private String fotoLocador;
@@ -25,6 +28,8 @@ public class Anuncio {
     private String combustivel;
     private String cidade;
     private String estado;
+    private String modeloVeiculo;
+    private String statusPedido;
     private double valorDiaria;
     private double valorCombustivel;
     private double valorQuilometragem;
@@ -220,5 +225,29 @@ public class Anuncio {
 
     public void setLocalizacaoAgencia(String localizacaoAgencia) {
         this.localizacaoAgencia = localizacaoAgencia;
+    }
+
+    public int getIdStatusPublicacao() {
+        return idStatusPublicacao;
+    }
+
+    public String getModeloVeiculo() {
+        return modeloVeiculo;
+    }
+
+    public void setModeloVeiculo(String modeloVeiculo) {
+        this.modeloVeiculo = modeloVeiculo;
+    }
+
+    public void setIdStatusPublicacao(int idStatusPublicacao) {
+        this.idStatusPublicacao = idStatusPublicacao;
+    }
+
+    public String getStatusPedido() {
+        return statusPedido;
+    }
+
+    public void setStatusPedido(String statusPedido) {
+        this.statusPedido = statusPedido;
     }
 }
