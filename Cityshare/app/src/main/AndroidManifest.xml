@@ -166,6 +166,7 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".MeusAnunciosActivity"
-            android:label="@string/title_activity_meus_anuncios"/>
+            android:label="@string/title_activity_meus_anuncios"
+            android:parentActivityName=".MainActivity"/>
     </application>
 </manifest>

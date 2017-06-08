@@ -12,6 +12,7 @@ public class Usuario {
     private int idPlanoConta;
     private int idLicencaDesktop;
     private int autenticacaoDupla;
+    private int qtdLocacoes;
     private String nome;
     private String sobrenome;
     private char sexo;
@@ -23,6 +24,7 @@ public class Usuario {
     private String rg;
     private String senha;
     private double saldo;
+    private double mediaNotas;
     private String dataNascimento;
     private String fotoPerfil;
     private Cnh[] listaCnh;
@@ -211,5 +213,21 @@ public class Usuario {
 
     public void setContaBancaria(ContaBancaria contaBancaria) {
         this.contaBancaria = contaBancaria;
+    }
+
+    public int getQtdLocacoes() {
+        return qtdLocacoes;
+    }
+
+    public void setQtdLocacoes(int qtdLocacoes) {
+        this.qtdLocacoes = qtdLocacoes;
+    }
+
+    public double getMediaNotas() {
+        return mediaNotas;
+    }
+
+    public void setMediaNotas(double mediaNotas) {
+        this.mediaNotas = mediaNotas;
     }
 }

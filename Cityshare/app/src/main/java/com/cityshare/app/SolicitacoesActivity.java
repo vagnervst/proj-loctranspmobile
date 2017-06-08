@@ -30,6 +30,7 @@ import com.cityshare.app.model.HttpRequest;
 import com.cityshare.app.model.Login;
 import com.cityshare.app.model.Pedido;
 import com.cityshare.app.model.Server;
+import com.cityshare.app.model.Usuario;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -261,46 +262,79 @@ public class SolicitacoesActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Detalhes do Condutor");
-            View dialog_detalhes_solicitacao = LayoutInflater.from(context).inflate(R.layout.dialog_detalhes_solicitacao, null);
 
-            ImageView iv_foto_usuario = (ImageView) dialog_detalhes_solicitacao.findViewById(R.id.iv_foto_usuario);
-            TextView txt_nome_usuario = (TextView) dialog_detalhes_solicitacao.findViewById(R.id.txt_nome_usuario);
-            TextView txt_localizacao_usuario = (TextView) dialog_detalhes_solicitacao.findViewById(R.id.txt_localizacao_usuario);
-            TextView txt_numero_locacoes = (TextView) dialog_detalhes_solicitacao.findViewById(R.id.txt_numero_locacoes);
-            TextView txt_avaliacao_usuario = (TextView) dialog_detalhes_solicitacao.findViewById(R.id.txt_avaliacao);
+            new AsyncTask<Void, Void, Usuario>() {
+                ProgressDialog progress;
 
-            ImageButton btn_recusar = (ImageButton) dialog_detalhes_solicitacao.findViewById(R.id.ib_recusar);
-            ImageButton btn_aceitar = (ImageButton) dialog_detalhes_solicitacao.findViewById(R.id.ib_aceitar);
-
-            txt_nome_usuario.setText( String.format(Locale.getDefault(), "%s %s", pedido.getNomeLocatario(), pedido.getSobrenomeLocatario().charAt(0)) );
-
-            String url = Server.servidor + "img/uploads/usuarios/" + pedido.getImagemPerfilLocatario();
-            new GetImagemSolicitacao(url, iv_foto_usuario, true).execute();
-
-            txt_localizacao_usuario.setText( String.format(Locale.getDefault(), "%s, %s", pedido.getEstadoLocatario(), pedido.getCidadeLocatario()) );
-
-            builder.setView( dialog_detalhes_solicitacao );
-
-            final AlertDialog dialog = builder.create();
-
-            btn_recusar.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    new AlterarStatusSolicitacao(pedido.getId(), AlterarStatusSolicitacao.RECUSAR).execute();
-                    dialog.dismiss();
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    progress = ProgressDialog.show(context, "Carregando", "Aguarde");
                 }
-            });
 
-            btn_aceitar.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    new AlterarStatusSolicitacao(pedido.getId(), AlterarStatusSolicitacao.ACEITAR).execute();
-                    dialog.dismiss();
-                }
-            });
+                protected Usuario doInBackground(Void... params) {
+                    String url = Server.servidor + "apis/android/get_info_usuario.php";
 
-            dialog.show();
+                    HashMap<String, String> parametros = new HashMap<String, String>();
+                    parametros.put("idUsuario", String.valueOf(pedido.getIdUsuarioLocatario()));
+
+                    String json = HttpRequest.post(url, parametros);
+
+                    return new Gson().fromJson(json, Usuario.class);
+                }
+
+                @Override
+                protected void onPostExecute(Usuario usuarioLocatario) {
+                    super.onPostExecute(usuarioLocatario);
+                    progress.dismiss();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context).setTitle("Detalhes do Condutor");
+                    View dialog_detalhes_solicitacao = LayoutInflater.from(context).inflate(R.layout.dialog_detalhes_solicitacao, null);
+
+                    ImageView iv_foto_usuario = (ImageView) dialog_detalhes_solicitacao.findViewById(R.id.iv_foto_usuario);
+                    TextView txt_nome_usuario = (TextView) dialog_detalhes_solicitacao.findViewById(R.id.txt_nome_usuario);
+                    TextView txt_localizacao_usuario = (TextView) dialog_detalhes_solicitacao.findViewById(R.id.txt_localizacao_usuario);
+                    TextView txt_numero_locacoes = (TextView) dialog_detalhes_solicitacao.findViewById(R.id.txt_numero_locacoes);
+                    TextView txt_avaliacao_usuario = (TextView) dialog_detalhes_solicitacao.findViewById(R.id.txt_avaliacao);
+
+                    ImageButton btn_recusar = (ImageButton) dialog_detalhes_solicitacao.findViewById(R.id.ib_recusar);
+                    ImageButton btn_aceitar = (ImageButton) dialog_detalhes_solicitacao.findViewById(R.id.ib_aceitar);
+
+                    txt_nome_usuario.setText( String.format(Locale.getDefault(), "%s %s", pedido.getNomeLocatario(), pedido.getSobrenomeLocatario().charAt(0)) );
+
+                    String url = Server.servidor + "img/uploads/usuarios/" + pedido.getImagemPerfilLocatario();
+                    new GetImagemSolicitacao(url, iv_foto_usuario, true).execute();
+
+                    txt_localizacao_usuario.setText( String.format(Locale.getDefault(), "%s, %s", pedido.getEstadoLocatario(), pedido.getCidadeLocatario()) );
+
+                    txt_numero_locacoes.setText( String.valueOf(usuarioLocatario.getQtdLocacoes()) );
+                    txt_avaliacao_usuario.setText( String.format( Locale.getDefault(), "%d/5", Math.round(usuarioLocatario.getMediaNotas()) ) );
+
+                    builder.setView( dialog_detalhes_solicitacao );
+
+                    final AlertDialog dialog = builder.create();
+
+                    btn_recusar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new AlterarStatusSolicitacao(pedido.getId(), AlterarStatusSolicitacao.RECUSAR).execute();
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btn_aceitar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new AlterarStatusSolicitacao(pedido.getId(), AlterarStatusSolicitacao.ACEITAR).execute();
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.show();
+                }
+
+            }.execute();
         }
     }
 
